@@ -1,0 +1,3 @@
+describe('client', () => {
+    require('./components');
+});

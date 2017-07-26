@@ -1,9 +1,9 @@
-import {AppContainer} from 'react-hot-loader';
-import {Provider} from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/App';
+import {AppContainer} from 'react-hot-loader';
+import {Provider} from 'react-redux';
 import store from './state/store';
+import App from './components/App';
 
 /**
  * Renders root component

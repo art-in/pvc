@@ -3,6 +3,7 @@ const gutil = require('gulp-util');
 const webpack = require('webpack');
 const assert = require('assert');
 const WebpackDevServer = require('webpack-dev-server');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 /**
  * Gets client assets bundling config
@@ -12,6 +13,7 @@ const WebpackDevServer = require('webpack-dev-server');
  *
  * @param {object} opts
  * @param {string|array} root - module resolve root path
+ * @param {boolean} [minimize=false] - should minimize ouput bundle
  * @param {object}  opts.output
  * @param {string} opts.output.path - output bundle path
  * @param {string} opts.output.urlPath -
@@ -49,6 +51,8 @@ function getPackConfig(opts) {
     const loaders = {js: []};
     const resolveModules = [];
 
+    let devtool = false;
+
     if (opts.watch) {
         entries.push(
             'react-hot-loader/patch',
@@ -60,6 +64,21 @@ function getPackConfig(opts) {
         plugins.push(new webpack.HotModuleReplacementPlugin());
         plugins.push(new webpack.NamedModulesPlugin());
         plugins.push(new webpack.NoEmitOnErrorsPlugin());
+    }
+
+    if (opts.minimize) {
+        // for libs that rely on environment vars for minification
+        // (eg. react, redux)
+        plugins.push(new webpack.DefinePlugin({
+            'process.env.NODE_ENV': '"production"'
+        }));
+
+        devtool = false;
+        plugins.push(new UglifyJSPlugin());
+    } else {
+        // eval-source-map gives stacktraces without source file:line
+        // (when stacktrace passed from chrome/phantomjs to terminal by karma)
+        devtool = 'inline-source-map';
     }
 
     entries.push('babel-polyfill');
@@ -77,9 +96,7 @@ function getPackConfig(opts) {
     root.forEach(p => resolveModules.push(path.resolve(__dirname, p)));
     
     return {
-        // eval-source-map gives stacktraces without source file:line
-        // (when stacktrace passed from chrome/phantomjs to terminal by karma)
-        devtool: 'inline-source-map',
+        devtool,
         entry: entries,
         output: {
             path: opts.output.path,
