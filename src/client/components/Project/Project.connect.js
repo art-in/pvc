@@ -16,14 +16,18 @@ export default connect(
         //   and redux will force component update on that fragment change.
         //   in this case re-render will be called separately on each project 
         //   component, which allows us to use 'shouldComponentUpdate'
-        project: findProject(state.rootProject, ownProps.projectId)
+        project: findProject(state.rootProject, ownProps.projectId),
+
+        isConfiguring: state.isConfiguringVisibility
     }),
     dispatch => ({
-        onExpanding: projectId => {
-            dispatch(projects.expandProject(projectId));
-        },
-        onCollapsing: projectId => {
-            dispatch(projects.collapseProject(projectId));
-        }
+        onExpand: projectId =>
+            dispatch(projects.expandProject(projectId)),
+        onCollapse: projectId =>
+            dispatch(projects.collapseProject(projectId)),
+        onShow: projectId =>
+            dispatch(projects.showProject(projectId)),
+        onHide: projectId =>
+            dispatch(projects.hideProject(projectId))
     })
 )(Component);

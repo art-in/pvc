@@ -2,6 +2,10 @@
     margin-top: 5px;
 }
 
+.root.hidden {
+    color: gray;
+}
+
 .header {
     background-color: #F3F5F7;
     padding: 4px 3px;
@@ -11,12 +15,22 @@
     margin-left: 10px;
 }
 
-.header-name {}
+.name {}
 
-.header-collapse,
-.header-expand {
+.collapse,
+.expand {
     cursor: pointer;
     text-decoration: underline;
+}
+
+.config {
+    float: right;
+}
+
+.show,
+.hide {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .child {

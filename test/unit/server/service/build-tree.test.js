@@ -39,21 +39,27 @@ describe('build-tree', () => {
             id: '_Root',
             childProjects: [{
                 id: 'proj-1',
+                parentProjectId: '_Root',
                 childProjects: [{
                     id: 'proj-1-a',
+                    parentProjectId: 'proj-1',
                     childProjects: []
                 }]
             }, {
                 id: 'proj-2',
+                parentProjectId: '_Root',
                 childProjects: [{
                     id: 'proj-2-a',
+                    parentProjectId: 'proj-2',
                     childProjects: [{
                         id: 'proj-2-a-b',
+                        parentProjectId: 'proj-2-a',
                         childProjects: []
                     }]
                 }]
             }, {
                 id: 'proj-3',
+                parentProjectId: '_Root',
                 childProjects: []
             }]
         });

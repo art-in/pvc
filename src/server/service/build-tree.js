@@ -36,7 +36,6 @@ function extractChildProjects(projects, parentProject) {
     
     parentProject.childProjects = childProjects;
     childProjects.forEach(p => removeFromArray(projects, p));
-    childProjects.forEach(p => delete p.parentProjectId);
     childProjects.forEach(p => extractChildProjects(projects, p));
 
     return parentProject;

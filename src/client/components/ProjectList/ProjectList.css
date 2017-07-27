@@ -3,3 +3,12 @@
     margin: 0 auto;
     margin-top: 30px;
 }
+
+.header {
+    text-align: right;
+}
+
+.config-btn {
+    text-decoration: underline;
+    cursor: pointer;
+}

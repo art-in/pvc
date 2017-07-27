@@ -19,8 +19,12 @@ describe('Project', () => {
                 name: '<Root project>',
                 childProjects: [],
                 buildTypes: [],
-                collapsed: false
-            }
+                vis: {
+                    collapsed: false,
+                    visible: true
+                }
+            },
+            isConfiguringVisibility: false
         });
 
         // target
@@ -43,8 +47,12 @@ describe('Project', () => {
                 name: '<Root project>',
                 childProjects: [],
                 buildTypes: [],
-                collapsed: false
-            }
+                vis: {
+                    collapsed: false,
+                    visible: true
+                }
+            },
+            isConfiguringVisibility: false
         });
 
         // target
@@ -55,7 +63,7 @@ describe('Project', () => {
         );
         
         // check
-        const target = wrapper.find('.Project-header-name');
+        const target = wrapper.find('.Project-name');
         expect(target).to.have.length(1);
         expect(target.text()).to.equal('<Root project>');
     });
@@ -72,11 +80,18 @@ describe('Project', () => {
                     name: 'Project 1',
                     childProjects: [],
                     buildTypes: [],
-                    collapsed: false
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    }
                 }],
                 buildTypes: [],
-                collapsed: false
-            }
+                vis: {
+                    collapsed: false,
+                    visible: true
+                }
+            },
+            isConfiguringVisibility: false
         });
 
         // target
@@ -87,7 +102,7 @@ describe('Project', () => {
         );
         
         // check
-        const targetName = wrapper.find('.Project-header-name');
+        const targetName = wrapper.find('.Project-name');
         expect(targetName).to.have.length(2);
         expect(targetName.at(0).text()).to.equal('<Root project>');
 
@@ -95,7 +110,7 @@ describe('Project', () => {
             .find('.Project-child-projects .Project-root');
         expect(targetChildProjects).to.have.length(1);
         expect(targetChildProjects.at(0)
-            .find('.Project-header-name').text()).to.equal('Project 1');
+            .find('.Project-name').text()).to.equal('Project 1');
     });
 
     it('should render build types', () => {
@@ -113,8 +128,12 @@ describe('Project', () => {
                     id: 'build_2',
                     name: 'Build 2'
                 }],
-                collapsed: false
-            }
+                vis: {
+                    collapsed: false,
+                    visible: true
+                }
+            },
+            isConfiguringVisibility: false
         });
 
         // target
@@ -142,14 +161,21 @@ describe('Project', () => {
                     name: 'Project 1',
                     childProjects: [],
                     buildTypes: [],
-                    collapsed: false
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    }
                 }],
                 buildTypes: [{
                     id: 'build_1',
                     name: 'Build 1'
                 }],
-                collapsed: true
-            }
+                vis: {
+                    collapsed: true,
+                    visible: true
+                }
+            },
+            isConfiguringVisibility: false
         });
 
         // target
