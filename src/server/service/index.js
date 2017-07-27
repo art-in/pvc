@@ -1,4 +1,3 @@
-import fs from 'fs';
 import fetch from 'node-fetch';
 import parseXml from '../utils/xml-parser';
 import config from '../../../config';
