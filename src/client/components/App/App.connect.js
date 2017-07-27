@@ -2,9 +2,9 @@ import {connect} from 'react-redux';
 import Component from './App';
 import * as projects from '../../state/projects/actions';
 
-const connected = connect(
+export default connect(
     state => ({
-        projects: state.projects
+        rootProject: state.rootProject
     }),
     dispatch => ({
         onComponentDidMount: () => {
@@ -12,5 +12,3 @@ const connected = connect(
         }
     })
 )(Component);
-
-export default connected;

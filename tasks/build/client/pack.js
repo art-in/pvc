@@ -5,7 +5,7 @@ module.exports = {
     deps: ['clean:client'],
     fn: function(gulp) {
         return packer.pack({
-            root: config.src.client.root,
+            root: config.src.path,
             entry: config.src.client.entry,
             minimize: true,
             output: {

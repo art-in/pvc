@@ -4,10 +4,11 @@ const abs = p => path.join(__dirname, p);
 
 module.exports = {
 
-    root: __dirname,
+    path: __dirname,
     src: {
+        path: abs('./src/'),
         serv: {
-            root: abs('./src/server/'),
+            path: abs('./src/server/'),
             entry: abs('./src/server/index.js'),
             output: {
                 path: abs('./dist/server/'),
@@ -15,7 +16,7 @@ module.exports = {
             }
         },
         client: {
-            root: abs('./src/client/'),
+            path: abs('./src/client/'),
             entry: abs('./src/client/index.js'),
             output: {
                 path: abs('./dist/client/'),
@@ -25,10 +26,16 @@ module.exports = {
                     name: 'bundle.js'
                 }
             }
+        },
+        shared: {
+            path: abs('./src/shared/'),
+            output: {
+                path: abs('./dist/shared/')
+            }
         }
     },
     test: {
-        root: abs('./test/'),
+        path: abs('./test/'),
         unit: {
             entry: abs('./test/unit/entry.js'),
             output: {

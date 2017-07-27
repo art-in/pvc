@@ -1,3 +1,3 @@
 module.exports = {
-    deps: ['test:unit']
+    deps: ['test:static', 'test:unit']
 };

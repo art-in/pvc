@@ -5,7 +5,7 @@ module.exports = {
     deps: ['build:client:static'],
     fn: function() {
         return packer.pack({
-            root: config.src.client.root,
+            root: config.src.path,
             entry: config.src.client.entry,
             output: {
                 path: config.src.client.output.bundle.path,

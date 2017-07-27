@@ -6,9 +6,15 @@ module.exports = {
     fn: function(gulp) {
         nodemon({
             script: config.src.serv.output.path + config.src.serv.output.name,
-            watch: config.src.serv.output.path
+            watch: [
+                config.src.serv.output.path,
+                config.src.shared.output.path
+            ]
         });
-        return gulp.watch(config.src.serv.root + '/**/*.js',
-            ['build:server:no-clean']);
+        return gulp.watch([
+            config.src.serv.path + '/**/*.js',
+            config.src.shared.path + '/**/*.js'
+        ],
+        ['build:server:no-clean']);
     }
 };

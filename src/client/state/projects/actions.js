@@ -1,5 +1,7 @@
 export const types = {
-    PROJECTS_LOADED: 'projects loaded'
+    PROJECTS_LOADED: 'projects loaded',
+    COLLAPSE_PROJECT: 'collapse project',
+    EXPAND_PROJECT: 'expand project'
 };
 
 /**
@@ -13,6 +15,30 @@ export const onInit = () => async dispatch => {
 
     dispatch({
         type: types.PROJECTS_LOADED,
-        data: data.projects.project
+        data
+    });
+};
+
+/**
+ * Collapses project
+ * @param {string} projectId 
+ * @return {function}
+ */
+export const collapseProject = projectId => async dispatch => {
+    dispatch({
+        type: types.COLLAPSE_PROJECT,
+        projectId
+    });
+};
+
+/**
+ * Expands project
+ * @param {string} projectId 
+ * @return {function}
+ */
+export const expandProject = projectId => async dispatch => {
+    dispatch({
+        type: types.EXPAND_PROJECT,
+        projectId
     });
 };

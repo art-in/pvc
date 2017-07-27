@@ -1,0 +1,13 @@
+.root {
+    height: 58px;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 30px;
+}
+
+.container {
+    max-width: 1600px;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 58px;
+    vertical-align: middle;
+}

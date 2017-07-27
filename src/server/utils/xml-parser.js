@@ -1,11 +1,8 @@
 import xml2js from 'xml2js';
-import processors from 'xml2js/lib/processors.js';
 
 const parser = new xml2js.Parser({
     mergeAttrs: true,
-    explicitArray: false,
-    valueProcessors: [processors.parseNumbers],
-    attrValueProcessors: [processors.parseNumbers]
+    explicitArray: false
 });
 
 /**

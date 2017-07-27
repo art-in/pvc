@@ -1,5 +1,6 @@
 import {types} from './actions';
-import {clone} from '../helpers';
+import clone from 'shared/utils/clone';
+import findProject from 'shared/utils/traversing/find-project';
 
 export default (oldState, action) => {
 
@@ -7,8 +8,20 @@ export default (oldState, action) => {
 
     switch (action.type) {
     case types.PROJECTS_LOADED:
-        state.projects = action.data;
+        state.rootProject = action.data;
         break;
+
+    case types.COLLAPSE_PROJECT: {
+        const project = findProject(state.rootProject, action.projectId);
+        project.collapsed = true;
+        break;
+    }
+
+    case types.EXPAND_PROJECT: {
+        const project = findProject(state.rootProject, action.projectId);
+        project.collapsed = false;
+        break;
+    }
 
     default:
         return oldState;

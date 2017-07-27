@@ -1,0 +1,3 @@
+describe('shared', () => {
+    require('./utils');
+});

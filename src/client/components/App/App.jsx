@@ -1,5 +1,10 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
+
+import Header from '../Header';
+import Footer from '../Footer';
+import ProjectList from '../ProjectList';
+
 import classes from './App.css';
 
 /**
@@ -8,8 +13,8 @@ import classes from './App.css';
 export default class App extends Component {
 
     static propTypes = {
-        projects: PropTypes.array.isRequired,
-        onComponentDidMount: PropTypes.func.isRequired
+        onComponentDidMount: PropTypes.func.isRequired,
+        rootProject: PropTypes.object
     }
 
     componentDidMount() {
@@ -18,9 +23,15 @@ export default class App extends Component {
 
     render() {
         return (
-            <main className={classes.root}>
-                Total number of projects: {this.props.projects.length}
-            </main>
+            <div className={classes.root}>
+                <Header />
+
+                <main className={classes.main}>
+                    <ProjectList />
+                </main>
+                
+                <Footer />
+            </div>
         );
     }
 }

@@ -1,0 +1,32 @@
+.root {
+    margin-top: 5px;
+}
+
+.header {
+    background-color: #F3F5F7;
+    padding: 4px 3px;
+}
+
+.header > span + span {
+    margin-left: 10px;
+}
+
+.header-name {}
+
+.header-collapse,
+.header-expand {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.child {
+    margin-left: 30px;
+}
+
+.child-projects {
+    margin-top: 4px;
+}
+
+.build-types {
+    margin-top: 4px;
+}

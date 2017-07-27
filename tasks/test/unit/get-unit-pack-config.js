@@ -8,10 +8,10 @@ module.exports = () =>
             // eg. when importing 'utils' it is not clear
             // whether its source utils or test utils. better
             // use explicit notation 'src/utils' or 'test/utils'
-            config.root,
+            config.path,
 
             // for src-modules internal references to work
-            config.src.client.root
+            config.src.path
         ],
         output: {
             path: config.test.unit.output.path,
