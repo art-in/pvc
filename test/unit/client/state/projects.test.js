@@ -243,4 +243,180 @@ describe('projects', () => {
 
     });
 
+    describe('moveProjectUp', () => {
+
+        it('should move project one position up', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    childProjects: [{
+                        id: 'proj-1',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        childProjects: []
+                    }, {
+                        id: 'proj-2',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        childProjects: []
+                    }]
+                }
+            });
+
+            // target
+            await store.dispatch(projects.moveProjectUp('proj-2'));
+
+            // check
+            const state = store.getState();
+            const root = state.rootProject;
+
+            expect(root.childProjects).to.have.length(2);
+            expect(root.childProjects[0].id).to.equal('proj-2');
+            expect(root.childProjects[1].id).to.equal('proj-1');
+        });
+
+        it('should skip if project is first', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    childProjects: [{
+                        id: 'proj-1',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        childProjects: []
+                    }, {
+                        id: 'proj-2',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        childProjects: []
+                    }]
+                }
+            });
+
+            // target
+            await store.dispatch(projects.moveProjectUp('proj-1'));
+
+            // check
+            const state = store.getState();
+            const root = state.rootProject;
+
+            expect(root.childProjects).to.have.length(2);
+            expect(root.childProjects[0].id).to.equal('proj-1');
+            expect(root.childProjects[1].id).to.equal('proj-2');
+        });
+
+    });
+
+    describe('moveProjectDown', () => {
+
+        it('should move project one position down', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    childProjects: [{
+                        id: 'proj-1',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        childProjects: []
+                    }, {
+                        id: 'proj-2',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        childProjects: []
+                    }]
+                }
+            });
+
+            // target
+            await store.dispatch(projects.moveProjectDown('proj-1'));
+
+            // check
+            const state = store.getState();
+            const root = state.rootProject;
+
+            expect(root.childProjects).to.have.length(2);
+            expect(root.childProjects[0].id).to.equal('proj-2');
+            expect(root.childProjects[1].id).to.equal('proj-1');
+        });
+
+        it('should skip if project is last', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    childProjects: [{
+                        id: 'proj-1',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        childProjects: []
+                    }, {
+                        id: 'proj-2',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        childProjects: []
+                    }]
+                }
+            });
+
+            // target
+            await store.dispatch(projects.moveProjectDown('proj-2'));
+
+            // check
+            const state = store.getState();
+            const root = state.rootProject;
+
+            expect(root.childProjects).to.have.length(2);
+            expect(root.childProjects[0].id).to.equal('proj-1');
+            expect(root.childProjects[1].id).to.equal('proj-2');
+        });
+
+    });
+
 });

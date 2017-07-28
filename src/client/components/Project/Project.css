@@ -27,8 +27,14 @@
     float: right;
 }
 
+.config span + span {
+    margin-left: 20px;
+}
+
 .show,
-.hide {
+.hide,
+.up,
+.down {
     text-decoration: underline;
     cursor: pointer;
 }

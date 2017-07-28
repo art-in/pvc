@@ -9,7 +9,9 @@ export const types = {
     START_VISIBILITY_CONFIGURATION: 'start visibility configuration',
     STOP_VISIBILITY_CONFIGURATION: 'stop visibility configuration',
     SHOW_PROJECTS: 'show projects',
-    HIDE_PROJECTS: 'hide projects'
+    HIDE_PROJECTS: 'hide projects',
+    MOVE_PROJECT_UP: 'move project up',
+    MOVE_PROJECT_DOWN: 'move project down'
 };
 
 /**
@@ -117,5 +119,29 @@ export const hideProject = projectId => async (dispatch, getState) => {
     dispatch({
         type: types.HIDE_PROJECTS,
         projectIds: projectToHideIds
+    });
+};
+
+/**
+ * Moves project one step up
+ * @param {string} projectId
+ * @return {function}
+ */
+export const moveProjectUp = projectId => dispatch => {
+    dispatch({
+        type: types.MOVE_PROJECT_UP,
+        projectId
+    });
+};
+
+/**
+ * Moves project one step down
+ * @param {string} projectId
+ * @return {function}
+ */
+export const moveProjectDown = projectId => dispatch => {
+    dispatch({
+        type: types.MOVE_PROJECT_DOWN,
+        projectId
     });
 };

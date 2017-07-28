@@ -31,24 +31,30 @@ export default class Project extends Component {
         onCollapse: PropTypes.func.isRequired,
 
         onShow: PropTypes.func.isRequired,
-        onHide: PropTypes.func.isRequired
+        onHide: PropTypes.func.isRequired,
+
+        onMoveUp: PropTypes.func.isRequired,
+        onMoveDown: PropTypes.func.isRequired
     }
 
     shouldComponentUpdate(nextProps) {
         const project = this.props.project;
         const nextProject = nextProps.project;
 
-        return project.id !== nextProject.id ||
+        return this.props.isConfiguring !== nextProps.isConfiguring ||
+            project.id !== nextProject.id ||
             project.vis.collapsed !== nextProject.vis.collapsed ||
             project.vis.visible !== nextProject.vis.visible ||
-            this.props.isConfiguring !== nextProps.isConfiguring;
+            project.childProjects.some((p, idx) => p.id !==
+                (nextProject.childProjects[idx] !== undefined &&
+                 nextProject.childProjects[idx].id));
     }
 
     render() {
         const {id, childProjects, buildTypes} = this.props.project;
         const {collapsed, visible} = this.props.project.vis;
         const {isConfiguring, onExpand, onCollapse} = this.props;
-        const {onShow, onHide} = this.props;
+        const {onShow, onHide, onMoveUp, onMoveDown} = this.props;
         
         if (!isConfiguring && !visible) {
             // project configured to be hidden
@@ -83,6 +89,14 @@ export default class Project extends Component {
         if (isConfiguring) {
             config = (
                 <span className={classes.config}>
+                    <span className={classes.up}
+                        onClick={onMoveUp.bind(null, id)}>
+                        {'up'}
+                    </span>
+                    <span className={classes.down}
+                        onClick={onMoveDown.bind(null, id)}>
+                        {'down'}
+                    </span>
                     <span className={cx({
                         [classes.hide]: visible,
                         [classes.show]: !visible})}

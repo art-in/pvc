@@ -28,6 +28,10 @@ export default connect(
         onShow: projectId =>
             dispatch(projects.showProject(projectId)),
         onHide: projectId =>
-            dispatch(projects.hideProject(projectId))
+            dispatch(projects.hideProject(projectId)),
+        onMoveUp: projectId =>
+            dispatch(projects.moveProjectUp(projectId)),
+        onMoveDown: projectId =>
+            dispatch(projects.moveProjectDown(projectId))
     })
 )(Component);
