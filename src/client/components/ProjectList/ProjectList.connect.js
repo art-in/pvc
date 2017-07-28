@@ -12,6 +12,10 @@ export default connect(
         onStartConfiguration: () =>
             dispatch(projects.startConfiguration()),
         onStopConfiguration: () =>
-            dispatch(projects.stopConfiguration())
+            dispatch(projects.stopConfiguration()),
+        onCollapseAll: () =>
+            dispatch(projects.collapseAll()),
+        onExpandAll: () =>
+            dispatch(projects.expandAll())
     })
 )(Component);

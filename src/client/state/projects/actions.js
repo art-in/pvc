@@ -54,11 +54,33 @@ export const collapseProject = projectId => async dispatch => {
  * @param {string} projectId 
  * @return {function}
  */
-export const expandProject = projectId => async dispatch => {
+export const expandProject = projectId => dispatch => {
     dispatch({
         type: types.EXPAND_PROJECT,
         projectId
     });
+};
+
+/**
+ * Expands all projects
+ * @return {function}
+ */
+export const expandAll = () => (dispatch, getState) => {
+    const state = getState();
+    forEachProject(state.rootProject, p => setTimeout(() => {
+        dispatch(expandProject(p.id));
+    }));
+};
+
+/**
+ * Collapses all projects
+ * @return {function}
+ */
+export const collapseAll = () => (dispatch, getState) => {
+    const state = getState();
+    forEachProject(state.rootProject, p => setTimeout(() => {
+        dispatch(collapseProject(p.id));
+    }));
 };
 
 /**

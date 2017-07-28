@@ -1,45 +1,13 @@
 .root {
-    margin-top: 5px;
+    margin-top: 7px;
 }
 
 .root.hidden {
     color: gray;
 }
 
-.header {
-    background-color: #F3F5F7;
-    padding: 4px 3px;
-}
-
-.header > span + span {
-    margin-left: 10px;
-}
-
-.name {}
-
-.collapse,
-.expand {
-    cursor: pointer;
-    text-decoration: underline;
-}
-
-.config {
-    float: right;
-}
-
-.config span + span {
-    margin-left: 20px;
-}
-
-.show,
-.hide,
-.up,
-.down {
-    text-decoration: underline;
-    cursor: pointer;
-}
-
 .drag-handle {
+    /* TODO: setup autoprefixer */
     cursor: grab;
     cursor: -webkit-grab;
 }
@@ -51,6 +19,7 @@
     pointer-events: auto !important;
     cursor: grabbing;
     cursor: -webkit-grabbing;
+    font-size: 17px;
 }
 
 .child {

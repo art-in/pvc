@@ -12,27 +12,37 @@ export default class ProjectList extends Component {
         rootProject: PropTypes.object,
         isConfiguring: PropTypes.bool.isRequired,
         onStartConfiguration: PropTypes.func.isRequired,
-        onStopConfiguration: PropTypes.func.isRequired
+        onStopConfiguration: PropTypes.func.isRequired,
+        onCollapseAll: PropTypes.func.isRequired,
+        onExpandAll: PropTypes.func.isRequired
     }
 
     render() {
         const {rootProject, isConfiguring} = this.props;
         const {onStartConfiguration, onStopConfiguration} = this.props;
+        const {onCollapseAll, onExpandAll} = this.props;
 
         return (
             <div className={classes.root}>
                 <div className={classes['header']}>
-                    {isConfiguring ?
-                        <span className={classes['config-btn']}
-                            onClick={onStopConfiguration}>
-                            {'Cancel Configuring Visible Projects'}
-                        </span>
-                        :
-                        <span className={classes['config-btn']}
-                            onClick={onStartConfiguration}>
-                            {'Configure Visible Projects'}
-                        </span>
-                    }
+                    <span className={classes['colexp-btn']}
+                        onClick={onCollapseAll}>
+                        collapse all
+                    </span>
+                    &nbsp; / &nbsp;
+                    <span className={classes['colexp-btn']}
+                        onClick={onExpandAll}>
+                        expand all
+                    </span>
+                    
+                    <span className={classes['config-btn']}
+                        onClick={isConfiguring ?
+                            onStopConfiguration :
+                            onStartConfiguration}>
+                        {isConfiguring ?
+                            'Cancel Configuring Visible Projects' :
+                            'Configure Visible Projects'}
+                    </span>
                 </div>
 
                 {rootProject ?

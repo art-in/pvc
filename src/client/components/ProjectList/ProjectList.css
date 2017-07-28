@@ -2,13 +2,20 @@
     max-width: 1600px;
     margin: 0 auto;
     margin-top: 30px;
+    font-size: 17px;
 }
 
 .header {
-    text-align: right;
+    margin-bottom: 15px;
+}
+
+.colexp-btn {
+    text-decoration: underline;
+    cursor: pointer;
 }
 
 .config-btn {
+    float: right;
     text-decoration: underline;
     cursor: pointer;
 }

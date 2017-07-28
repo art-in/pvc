@@ -8,7 +8,7 @@ export default class Header extends Component {
         return (
             <header className={classes.root}>
                 <div className={classes.container}>
-                    header
+                    pvc
                 </div>
             </header>
         );

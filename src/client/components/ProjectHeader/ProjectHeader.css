@@ -1,0 +1,32 @@
+.header {
+    background-color: #F3F5F7;
+    padding: 5px;
+}
+
+.header > span + span {
+    margin-left: 10px;
+}
+
+.name {}
+
+.collapse,
+.expand {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.config {
+    float: right;
+}
+
+.config span + span {
+    margin-left: 20px;
+}
+
+.show,
+.hide,
+.up,
+.down {
+    text-decoration: underline;
+    cursor: pointer;
+}
