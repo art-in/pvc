@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import logger from 'morgan';
+import bodyParser from 'body-parser';
 
 import config from '../../config';
 import api from './api';
@@ -8,6 +9,7 @@ import api from './api';
 const app = express();
 
 app.use(logger('dev'));
+app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../client')));
 
 app.use('/api', api);

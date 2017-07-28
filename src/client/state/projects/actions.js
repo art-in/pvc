@@ -1,15 +1,18 @@
+import api from '../api';
+
 import forEachProject from 'shared/utils/traversing/for-each-project';
-import bubble from 'shared/utils/traversing/bubble';
 import findProject from 'shared/utils/traversing/find-project';
+import timer from 'shared/utils/timer';
 
 export const types = {
     PROJECTS_LOADED: 'projects loaded',
-    COLLAPSE_PROJECT: 'collapse project',
-    EXPAND_PROJECT: 'expand project',
     START_VISIBILITY_CONFIGURATION: 'start visibility configuration',
     STOP_VISIBILITY_CONFIGURATION: 'stop visibility configuration',
-    SHOW_PROJECTS: 'show projects',
-    HIDE_PROJECTS: 'hide projects',
+
+    COLLAPSE_PROJECT: 'collapse project',
+    EXPAND_PROJECT: 'expand project',
+    SHOW_PROJECT: 'show project',
+    HIDE_PROJECT: 'hide project',
     MOVE_PROJECT: 'move project'
 };
 
@@ -19,17 +22,9 @@ export const types = {
  */
 export const onInit = () => async dispatch => {
 
-    // TODO: handle errors
-    const response = await fetch('api/projects');
+    // TODO: handle rest api errors
+    const response = await api('GET', '/projects');
     const rootProject = await response.json();
-
-    forEachProject(rootProject, p => {
-        // setup visibility props
-        p.vis = {
-            collapsed: true,
-            visible: true
-        };
-    });
 
     dispatch({
         type: types.PROJECTS_LOADED,
@@ -42,7 +37,10 @@ export const onInit = () => async dispatch => {
  * @param {string} projectId 
  * @return {function}
  */
-export const collapseProject = projectId => async dispatch => {
+export const collapseProject = projectId => dispatch => {
+
+    api('PUT', `/projects/${projectId}/vis/collapsed`);
+    
     dispatch({
         type: types.COLLAPSE_PROJECT,
         projectId
@@ -55,6 +53,9 @@ export const collapseProject = projectId => async dispatch => {
  * @return {function}
  */
 export const expandProject = projectId => dispatch => {
+
+    api('DELETE', `/projects/${projectId}/vis/collapsed`);
+
     dispatch({
         type: types.EXPAND_PROJECT,
         projectId
@@ -62,25 +63,31 @@ export const expandProject = projectId => dispatch => {
 };
 
 /**
- * Expands all projects
- * @return {function}
- */
-export const expandAll = () => (dispatch, getState) => {
-    const state = getState();
-    forEachProject(state.rootProject, p => setTimeout(() => {
-        dispatch(expandProject(p.id));
-    }));
-};
-
-/**
- * Collapses all projects
+ * Collapses all visible projects
  * @return {function}
  */
 export const collapseAll = () => (dispatch, getState) => {
     const state = getState();
-    forEachProject(state.rootProject, p => setTimeout(() => {
-        dispatch(collapseProject(p.id));
-    }));
+    const tasks = [];
+    forEachProject(state.rootProject, p =>
+        (state.isConfiguringVisibility || p.vis.visible) &&
+        !p.vis.collapsed &&
+        tasks.push(timer(() => dispatch(collapseProject(p.id)))));
+    return Promise.all(tasks);
+};
+
+/**
+ * Expands all visible projects
+ * @return {function}
+ */
+export const expandAll = () => (dispatch, getState) => {
+    const state = getState();
+    const tasks = [];
+    forEachProject(state.rootProject, p =>
+        (state.isConfiguringVisibility || p.vis.visible) &&
+        p.vis.collapsed &&
+        tasks.push(timer(() => dispatch(expandProject(p.id)))));
+    return Promise.all(tasks);
 };
 
 /**
@@ -108,19 +115,13 @@ export const stopConfiguration = () => async dispatch => {
  * @param {string} projectId 
  * @return {function}
  */
-export const showProject = projectId => async (dispatch, getState) => {
-    const state = getState();
-    const project = findProject(state.rootProject, projectId);
+export const showProject = projectId => async dispatch => {
 
-    const projectToShowIds = [];
-    bubble(state.rootProject, projectId,
-        p => !p.vis.visible && projectToShowIds.push(p.id));
-    forEachProject(project,
-        p => !p.vis.visible && projectToShowIds.push(p.id));
+    api('PUT', `/projects/${projectId}/vis/visible`);
 
     dispatch({
-        type: types.SHOW_PROJECTS,
-        projectIds: projectToShowIds
+        type: types.SHOW_PROJECT,
+        projectId
     });
 };
 
@@ -129,17 +130,13 @@ export const showProject = projectId => async (dispatch, getState) => {
  * @param {string} projectId 
  * @return {function}
  */
-export const hideProject = projectId => async (dispatch, getState) => {
-    const state = getState();
+export const hideProject = projectId => async dispatch => {
 
-    const project = findProject(state.rootProject, projectId);
-    const projectToHideIds = [];
-    forEachProject(project,
-        p => p.vis.visible && projectToHideIds.push(p.id));
+    api('DELETE', `/projects/${projectId}/vis/visible`);
 
     dispatch({
-        type: types.HIDE_PROJECTS,
-        projectIds: projectToHideIds
+        type: types.HIDE_PROJECT,
+        projectId
     });
 };
 
@@ -157,12 +154,7 @@ export const moveProjectUp = projectId => (dispatch, getState) => {
     const oldIdx = parent.childProjects.indexOf(project);
     const newIdx = oldIdx - 1;
 
-    dispatch({
-        type: types.MOVE_PROJECT,
-        parentProjectId: parent.id,
-        oldIdx,
-        newIdx
-    });
+    dispatch(moveProject(parent.id, oldIdx, newIdx));
 };
 
 /**
@@ -179,12 +171,7 @@ export const moveProjectDown = projectId => (dispatch, getState) => {
     const oldIdx = parent.childProjects.indexOf(project);
     const newIdx = oldIdx + 1;
 
-    dispatch({
-        type: types.MOVE_PROJECT,
-        parentProjectId: parent.id,
-        oldIdx,
-        newIdx
-    });
+    dispatch(moveProject(parent.id, oldIdx, newIdx));
 };
 
 /**
@@ -195,6 +182,12 @@ export const moveProjectDown = projectId => (dispatch, getState) => {
  * @return {function}
  */
 export const moveProject = (parentProjectId, oldIdx, newIdx) => dispatch => {
+
+    api('PATCH', `/projects/${parentProjectId}/child-projects/positions`, {
+        oldIdx,
+        newIdx
+    });
+
     dispatch({
         type: types.MOVE_PROJECT,
         parentProjectId,

@@ -1,5 +1,5 @@
-import clone from '../../shared/utils/clone';
-import removeFromArray from '../../shared/utils/remove-from-array';
+import clone from '../clone';
+import removeFromArray from '../remove-from-array';
 
 /**
  * Builds object tree structure from plain collection of project

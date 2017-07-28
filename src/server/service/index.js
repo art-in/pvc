@@ -3,16 +3,13 @@ import parseXml from '../utils/xml-parser';
 import config from '../../../config';
 import types from 'prop-types';
 import checkTypes from 'check-prop-types';
-import buildTree from './build-tree';
+import buildTree from '../../shared/utils/traversing/build-tree';
 
 /**
  * Gets projects from service
  * @return {object}
  */
 export async function getProjects() {
-    if (getProjects.cache) {
-        return getProjects.cache;
-    }
 
     const {defaultUrl, path} = config.projectsService;
 
@@ -31,15 +28,12 @@ export async function getProjects() {
         break;
     }
     default:
-        throw Error(`Unknown content type of response: "${contentType}"`);
+        throw Error(`Unknown content type of response: '${contentType}'`);
     }
 
     validateProjectsResponse(data);
 
     data = buildTree(data);
-
-    // precache valid response in node instance (cheap cache)
-    getProjects.cache = data;
     return data;
 }
 
@@ -80,7 +74,13 @@ function normalizeProjects(data) {
             buildTypes: p.buildTypes.map(b => ({
                 id: b.id,
                 name: b.name
-            }))
+            })),
+
+            // add visibility params
+            vis: {
+                collapsed: true,
+                visible: true
+            }
         }));
 
     return data;

@@ -1,6 +1,11 @@
 import {types} from './actions';
 import clone from 'shared/utils/clone';
-import findProject from 'shared/utils/traversing/find-project';
+
+import collapseProject from 'shared/utils/traversing/collapse-project';
+import expandProject from 'shared/utils/traversing/expand-project';
+import showProject from 'shared/utils/traversing/show-project';
+import hideProject from 'shared/utils/traversing/hide-project';
+import moveProject from 'shared/utils/traversing/move-project';
 
 export default (oldState, action) => {
 
@@ -11,17 +16,13 @@ export default (oldState, action) => {
         state.rootProject = action.rootProject;
         break;
 
-    case types.COLLAPSE_PROJECT: {
-        const project = findProject(state.rootProject, action.projectId);
-        project.vis.collapsed = true;
+    case types.COLLAPSE_PROJECT:
+        collapseProject(state.rootProject, action.projectId);
         break;
-    }
 
-    case types.EXPAND_PROJECT: {
-        const project = findProject(state.rootProject, action.projectId);
-        project.vis.collapsed = false;
+    case types.EXPAND_PROJECT:
+        expandProject(state.rootProject, action.projectId);
         break;
-    }
 
     case types.START_VISIBILITY_CONFIGURATION:
         state.isConfiguringVisibility = true;
@@ -31,36 +32,20 @@ export default (oldState, action) => {
         state.isConfiguringVisibility = false;
         break;
 
-    case types.SHOW_PROJECTS:
-        action.projectIds.forEach(id =>
-            findProject(state.rootProject, id).vis.visible = true);
+    case types.SHOW_PROJECT:
+        showProject(state.rootProject, action.projectId);
         break;
 
-    case types.HIDE_PROJECTS:
-        action.projectIds.forEach(id =>
-            findProject(state.rootProject, id).vis.visible = false);
+    case types.HIDE_PROJECT:
+        hideProject(state.rootProject, action.projectId);
         break;
     
     case types.MOVE_PROJECT: {
-        const parent = findProject(state.rootProject, action.parentProjectId);
-        const children = parent.childProjects;
-        let {newIdx, oldIdx} = action;
-        const project = children[oldIdx];
-
-        // border check
-        oldIdx = Math.max(oldIdx, 0);
-        oldIdx = Math.min(oldIdx, children.length - 1);
-        newIdx = Math.max(newIdx, 0);
-        newIdx = Math.min(newIdx, children.length - 1);
-
-        if (oldIdx === newIdx) {
-            // position was not changed
-            return oldState;
-        }
-        
-        // move
-        children.splice(oldIdx, 1);
-        children.splice(newIdx, 0, project);
+        moveProject(
+            state.rootProject,
+            action.parentProjectId,
+            action.oldIdx,
+            action.newIdx);
         break;
     }
 

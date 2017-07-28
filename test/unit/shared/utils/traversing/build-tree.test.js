@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import buildTree from 'src/server/service/build-tree';
+import buildTree from 'src/shared/utils/traversing/build-tree';
 
 describe('build-tree', () => {
 
