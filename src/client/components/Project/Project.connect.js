@@ -18,7 +18,8 @@ export default connect(
         //   component, which allows us to use 'shouldComponentUpdate'
         project: findProject(state.rootProject, ownProps.projectId),
 
-        isConfiguring: state.isConfiguringVisibility
+        isConfiguring: state.isConfiguringVisibility,
+        DragHandle: ownProps.DragHandle
     }),
     dispatch => ({
         onExpand: projectId =>
@@ -32,6 +33,8 @@ export default connect(
         onMoveUp: projectId =>
             dispatch(projects.moveProjectUp(projectId)),
         onMoveDown: projectId =>
-            dispatch(projects.moveProjectDown(projectId))
+            dispatch(projects.moveProjectDown(projectId)),
+        onMove: (projectId, {oldIndex, newIndex}) =>
+            dispatch(projects.moveProject(projectId, oldIndex, newIndex))
     })
 )(Component);

@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
-import ConnectedProject from './Project.connect';
+import ProjectChildren from '../ProjectChildren';
+
 import BuildType from '../BuildType';
 
 import classes from './Project.css';
@@ -34,13 +35,16 @@ export default class Project extends Component {
         onHide: PropTypes.func.isRequired,
 
         onMoveUp: PropTypes.func.isRequired,
-        onMoveDown: PropTypes.func.isRequired
+        onMoveDown: PropTypes.func.isRequired,
+
+        onMove: PropTypes.func.isRequired,
+        DragHandle: PropTypes.func
     }
 
     shouldComponentUpdate(nextProps) {
         const project = this.props.project;
         const nextProject = nextProps.project;
-
+        
         return this.props.isConfiguring !== nextProps.isConfiguring ||
             project.id !== nextProject.id ||
             project.vis.collapsed !== nextProject.vis.collapsed ||
@@ -54,13 +58,14 @@ export default class Project extends Component {
         const {id, childProjects, buildTypes} = this.props.project;
         const {collapsed, visible} = this.props.project.vis;
         const {isConfiguring, onExpand, onCollapse} = this.props;
-        const {onShow, onHide, onMoveUp, onMoveDown} = this.props;
+        const {onShow, onHide} = this.props;
+        const {onMoveUp, onMoveDown, onMove, DragHandle} = this.props;
         
         if (!isConfiguring && !visible) {
             // project configured to be hidden
             return null;
         }
-
+        
         let childProj;
         let build;
         let config;
@@ -68,15 +73,21 @@ export default class Project extends Component {
         // child projects
         if (childProjects.length) {
             childProj = (
-                <div className={classes['child-projects']}>
-                    {childProjects.map(p =>
-                        <ConnectedProject key={p.id} projectId={p.id} />)}
-                </div>
+                <ProjectChildren
+                    sortable={isConfiguring}
+                    helperClass={classes['drag-ghost']}
+                    lockToContainerEdges={true}
+                    lockAxis={'y'}
+                    useDragHandle={true}
+                    onSortEnd={onMove.bind(null, id)}
+                    className={classes['child-projects']}
+                    projectIds={childProjects.map(p => p.id)} />
             );
         }
 
         // build types
-        if (buildTypes.length) {
+        // do not show builds when configuring projects visibility
+        if (!isConfiguring && buildTypes.length) {
             build = (
                 <div className={classes['build-types']}>
                     {buildTypes.map(b =>
@@ -86,9 +97,14 @@ export default class Project extends Component {
         }
 
         // visibility configuration
+        // TODO: show drag-handle in modern browsers,
+        //       up/down buttons - in old ones (#1)
         if (isConfiguring) {
             config = (
                 <span className={classes.config}>
+
+                    {DragHandle && <DragHandle />}
+
                     <span className={classes.up}
                         onClick={onMoveUp.bind(null, id)}>
                         {'up'}
@@ -97,6 +113,7 @@ export default class Project extends Component {
                         onClick={onMoveDown.bind(null, id)}>
                         {'down'}
                     </span>
+
                     <span className={cx({
                         [classes.hide]: visible,
                         [classes.show]: !visible})}

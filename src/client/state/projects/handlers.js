@@ -40,36 +40,27 @@ export default (oldState, action) => {
         action.projectIds.forEach(id =>
             findProject(state.rootProject, id).vis.visible = false);
         break;
-
-    case types.MOVE_PROJECT_UP: {
-        const project = findProject(state.rootProject, action.projectId);
-        const parent = findProject(state.rootProject, project.parentProjectId);
+    
+    case types.MOVE_PROJECT: {
+        const parent = findProject(state.rootProject, action.parentProjectId);
         const children = parent.childProjects;
-        const idx = children.indexOf(project);
+        let {newIdx, oldIdx} = action;
+        const project = children[oldIdx];
 
-        if (idx === 0) {
-            // boundary check
+        // border check
+        oldIdx = Math.max(oldIdx, 0);
+        oldIdx = Math.min(oldIdx, children.length - 1);
+        newIdx = Math.max(newIdx, 0);
+        newIdx = Math.min(newIdx, children.length - 1);
+
+        if (oldIdx === newIdx) {
+            // position was not changed
             return oldState;
         }
-
-        // swap
-        [children[idx - 1], children[idx]] = [children[idx], children[idx - 1]];
-        break;
-    }
-
-    case types.MOVE_PROJECT_DOWN: {
-        const project = findProject(state.rootProject, action.projectId);
-        const parent = findProject(state.rootProject, project.parentProjectId);
-        const children = parent.childProjects;
-        const idx = children.indexOf(project);
-
-        if (idx === children.length - 1) {
-            // boundary check
-            return oldState;
-        }
-
-        // swap
-        [children[idx + 1], children[idx]] = [children[idx], children[idx + 1]];
+        
+        // move
+        children.splice(oldIdx, 1);
+        children.splice(newIdx, 0, project);
         break;
     }
 

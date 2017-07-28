@@ -150,6 +150,41 @@ describe('Project', () => {
         expect(target.at(1).text()).to.equal('BUILD: Build 2');
     });
 
+    it('should not render build types in config mode', () => {
+        
+        // setup
+        const store = mockStore({
+            rootProject: {
+                id: '_Root',
+                name: '<Root project>',
+                childProjects: [],
+                buildTypes: [{
+                    id: 'build_1',
+                    name: 'Build 1'
+                }, {
+                    id: 'build_2',
+                    name: 'Build 2'
+                }],
+                vis: {
+                    collapsed: false,
+                    visible: true
+                }
+            },
+            isConfiguringVisibility: true
+        });
+
+        // target
+        const wrapper = mount(
+            <Provider store={store}>
+                <Project projectId={'_Root'} />
+            </Provider>
+        );
+        
+        // check
+        const target = wrapper.find('.Project-build-types .BuildType-root');
+        expect(target).to.have.length(0);
+    });
+
     it('should not render children if collapsed', () => {
         // setup
         const store = mockStore({
@@ -191,6 +226,64 @@ describe('Project', () => {
 
         expect(builds).to.have.length(0);
         expect(projs).to.have.length(0);
+    });
+
+    it('should render config section in config mode', () => {
+
+        // setup
+        const store = mockStore({
+            rootProject: {
+                id: '_Root',
+                name: '<Root project>',
+                childProjects: [],
+                buildTypes: [],
+                vis: {
+                    collapsed: true,
+                    visible: true
+                }
+            },
+            isConfiguringVisibility: true
+        });
+
+        // target
+        const wrapper = mount(
+            <Provider store={store}>
+                <Project projectId={'_Root'} />
+            </Provider>
+        );
+
+        // check
+        const target = wrapper.find('.Project-config');
+        expect(target).to.have.length(1);
+    });
+
+    it('should not render config section in non-config mode', () => {
+        
+        // setup
+        const store = mockStore({
+            rootProject: {
+                id: '_Root',
+                name: '<Root project>',
+                childProjects: [],
+                buildTypes: [],
+                vis: {
+                    collapsed: true,
+                    visible: true
+                }
+            },
+            isConfiguringVisibility: false
+        });
+
+        // target
+        const wrapper = mount(
+            <Provider store={store}>
+                <Project projectId={'_Root'} />
+            </Provider>
+        );
+
+        // check
+        const target = wrapper.find('.Project-config');
+        expect(target).to.have.length(0);
     });
 
 });

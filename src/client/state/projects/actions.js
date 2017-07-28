@@ -10,8 +10,7 @@ export const types = {
     STOP_VISIBILITY_CONFIGURATION: 'stop visibility configuration',
     SHOW_PROJECTS: 'show projects',
     HIDE_PROJECTS: 'hide projects',
-    MOVE_PROJECT_UP: 'move project up',
-    MOVE_PROJECT_DOWN: 'move project down'
+    MOVE_PROJECT: 'move project'
 };
 
 /**
@@ -27,7 +26,7 @@ export const onInit = () => async dispatch => {
     forEachProject(rootProject, p => {
         // setup visibility props
         p.vis = {
-            collapsed: false,
+            collapsed: true,
             visible: true
         };
     });
@@ -123,25 +122,61 @@ export const hideProject = projectId => async (dispatch, getState) => {
 };
 
 /**
- * Moves project one step up
+ * Moves project in parent's children list one position up
  * @param {string} projectId
  * @return {function}
  */
-export const moveProjectUp = projectId => dispatch => {
+export const moveProjectUp = projectId => (dispatch, getState) => {
+    const state = getState();
+
+    const project = findProject(state.rootProject, projectId);
+    const parent = findProject(state.rootProject, project.parentProjectId);
+
+    const oldIdx = parent.childProjects.indexOf(project);
+    const newIdx = oldIdx - 1;
+
     dispatch({
-        type: types.MOVE_PROJECT_UP,
-        projectId
+        type: types.MOVE_PROJECT,
+        parentProjectId: parent.id,
+        oldIdx,
+        newIdx
     });
 };
 
 /**
- * Moves project one step down
+ * Moves project in parent's children list one position down
  * @param {string} projectId
  * @return {function}
  */
-export const moveProjectDown = projectId => dispatch => {
+export const moveProjectDown = projectId => (dispatch, getState) => {
+    const state = getState();
+
+    const project = findProject(state.rootProject, projectId);
+    const parent = findProject(state.rootProject, project.parentProjectId);
+
+    const oldIdx = parent.childProjects.indexOf(project);
+    const newIdx = oldIdx + 1;
+
     dispatch({
-        type: types.MOVE_PROJECT_DOWN,
-        projectId
+        type: types.MOVE_PROJECT,
+        parentProjectId: parent.id,
+        oldIdx,
+        newIdx
+    });
+};
+
+/**
+ * Moves child project to new position
+ * @param {string} parentProjectId 
+ * @param {number} oldIdx
+ * @param {number} newIdx
+ * @return {function}
+ */
+export const moveProject = (parentProjectId, oldIdx, newIdx) => dispatch => {
+    dispatch({
+        type: types.MOVE_PROJECT,
+        parentProjectId,
+        oldIdx,
+        newIdx
     });
 };
