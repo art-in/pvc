@@ -40,7 +40,10 @@
         "no-console": 0,
 
         // remove invisible spaces junk at the end of lines
-        "no-trailing-spaces": ["error", { "skipBlankLines": true }],
+        "no-trailing-spaces": ["error", {
+            "skipBlankLines": true,
+            "ignoreComments": true
+        }],
 
         // using 'const' instead of 'let' to follow spec meaning
         "prefer-const": ["error"],

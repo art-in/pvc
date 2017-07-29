@@ -5,5 +5,9 @@
  */
 export default function forEachProject(project, fn) {
     fn(project);
-    project.childProjects.forEach(p => forEachProject(p, fn));
+    if (project.childProjects !== null) {
+        project.childProjects.forEach(p => {
+            forEachProject(p, fn);
+        });
+    }
 }

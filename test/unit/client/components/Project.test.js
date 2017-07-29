@@ -286,4 +286,65 @@ describe('Project', () => {
         expect(target).to.have.length(0);
     });
 
+    it('should render waiter when loading children', () => {
+
+        // setup
+        const store = mockStore({
+            rootProject: {
+                id: '_Root',
+                name: '<Root project>',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                childrenLoading: true,
+                childProjects: null,
+                buildTypes: null
+            },
+            isConfiguringVisibility: false
+        });
+
+        // target
+        const wrapper = mount(
+            <Provider store={store}>
+                <Project projectId={'_Root'} />
+            </Provider>
+        );
+        
+        // check
+        const target = wrapper.find('.Waiter-root');
+        expect(target).to.have.length(1);
+    });
+
+
+    it('should not render waiter when not loading children', () => {
+
+        // setup
+        const store = mockStore({
+            rootProject: {
+                id: '_Root',
+                name: '<Root project>',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                childrenLoading: false,
+                childProjects: [],
+                buildTypes: []
+            },
+            isConfiguringVisibility: false
+        });
+
+        // target
+        const wrapper = mount(
+            <Provider store={store}>
+                <Project projectId={'_Root'} />
+            </Provider>
+        );
+        
+        // check
+        const target = wrapper.find('.Waiter-root');
+        expect(target).to.have.length(0);
+    });
+
 });

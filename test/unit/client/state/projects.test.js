@@ -1,28 +1,132 @@
 import {expect} from 'chai';
-import sinon from 'sinon';
 
+import * as mockFetch from '../../../utils/mock-fetch';
 import createStore from './create-store';
 import findProject from 'src/shared/utils/traversing/find-project';
 import * as projects from 'src/client/state/projects/actions';
 
-const originalFetch = window.fetch;
 let fetchMock;
 
 describe('projects', () => {
 
     beforeEach(() => {
-        // mock fetch
-        fetchMock = window.fetch = sinon.spy();
+        fetchMock = mockFetch.mock();
     });
 
     after(() => {
-        // restore fetch
-        window.fetch = originalFetch;
+        mockFetch.restore();
+    });
+
+    describe('loadChildren', () => {
+
+        it('should call rest api for children', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    childProjectLoading: false,
+                    childProjects: null
+                }
+            });
+
+            // target
+            await store.dispatch(projects.loadChildren('_Root'));
+
+            // check
+            expect(fetchMock.callCount).to.equal(1);
+            const params = fetchMock.firstCall.args;
+            expect(params[0]).to.match(
+                /\/projects\/_Root\/children\?session=.+/);
+            expect(params[1].method).to.equal('GET');
+        });
+
+        it('should set loading flag on parent project', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    childrenLoading: false,
+                    childProjects: null
+                }
+            });
+
+            // target
+            await store.dispatch(projects.loadChildren('_Root'));
+
+            // check
+            const state = store.getState();
+            const rootProject = state.rootProject;
+            expect(rootProject.childrenLoading).to.equal.true;
+        });
+
+        it('should set loaded children to parent', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    childrenLoading: false,
+                    childProjects: null
+                }
+            });
+
+            fetchMock = mockFetch.mock({json: () => ({
+                buildTypes: [{
+                    id: 'build-1',
+                    name: 'build-1'
+                }],
+                childProjects: [{
+                    id: 'proj-1',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    childrenLoading: false,
+                    childProjects: []
+                }]
+            })});
+
+            // target
+            await store.dispatch(projects.loadChildren('_Root'));
+
+            // check
+            const state = store.getState();
+            const rootProject = state.rootProject;
+            expect(rootProject.childrenLoading).to.equal.false;
+            expect(rootProject.childProjects).to.deep.equal([{
+                id: 'proj-1',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                childrenLoading: false,
+                childProjects: []
+            }]);
+            expect(rootProject.buildTypes).to.deep.equal([{
+                id: 'build-1',
+                name: 'build-1'
+            }]);
+        });
+
     });
 
     describe('collapseProject', () => {
 
-        it('should set project.collapsed to true', async () => {
+        it('should collapse project', async () => {
 
             // setup
             const store = createStore({
@@ -91,7 +195,7 @@ describe('projects', () => {
 
     describe('expandProject', () => {
 
-        it('should set project.collapsed to false', async () => {
+        it('should expand project', async () => {
 
             // setup
             const store = createStore({
@@ -154,6 +258,32 @@ describe('projects', () => {
             expect(params[0]).to.match(
                 /api\/projects\/proj-1\/vis\/collapsed\?session=.+/);
             expect(params[1].method).to.equal('DELETE');
+        });
+
+        it('should call rest api for not loaded child projects', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    childrenLoading: false,
+                    childProjects: null
+                }
+            });
+
+            // target
+            await store.dispatch(projects.expandProject('_Root'));
+
+            // check
+            expect(fetchMock.callCount).to.equal(2);
+            const params = fetchMock.secondCall.args;
+            expect(params[0]).to.match(
+                /\/projects\/_Root\/children\?session=.+/);
+            expect(params[1].method).to.equal('GET');
         });
 
     });

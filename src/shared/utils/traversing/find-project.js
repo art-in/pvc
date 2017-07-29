@@ -7,8 +7,13 @@
  * @return {object} found project
  */
 export default function findProject(project, projectId, isRoot = true) {
+
     if (project.id === projectId) {
         return project;
+    }
+
+    if (project.childProjects === null) {
+        return;
     }
 
     for (const p of project.childProjects) {

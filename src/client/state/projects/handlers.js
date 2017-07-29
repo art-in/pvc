@@ -6,6 +6,7 @@ import expandProject from 'shared/utils/traversing/expand-project';
 import showProject from 'shared/utils/traversing/show-project';
 import hideProject from 'shared/utils/traversing/hide-project';
 import moveProject from 'shared/utils/traversing/move-project';
+import findProject from 'shared/utils/traversing/find-project';
 
 export default (oldState, action) => {
 
@@ -46,6 +47,20 @@ export default (oldState, action) => {
             action.parentProjectId,
             action.oldIdx,
             action.newIdx);
+        break;
+    }
+
+    case types.PROJECT_CHILDREN_LOADING: {
+        const project = findProject(state.rootProject, action.parentProjectId);
+        project.childrenLoading = true;
+        break;
+    }
+
+    case types.PROJECT_CHILDREN_LOADED: {
+        const project = findProject(state.rootProject, action.parentProjectId);
+        project.childrenLoading = false;
+        project.childProjects = action.childProjects;
+        project.buildTypes = action.buildTypes;
         break;
     }
 

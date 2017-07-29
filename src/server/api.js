@@ -8,12 +8,15 @@ import expandProject from '../shared/utils/traversing/expand-project';
 import showProject from '../shared/utils/traversing/show-project';
 import hideProject from '../shared/utils/traversing/hide-project';
 import moveProject from '../shared/utils/traversing/move-project';
+import filterCollapsed from '../shared/utils/traversing/filter-collapsed';
+import findProject from '../shared/utils/traversing/find-project';
 
 const api = new express.Router();
 
 api.get('/projects',
     wrap(async (req, res) => {
-        const projects = await getProjectsForSession(req);
+        let projects = await getProjectsForSession(req);
+        projects = filterCollapsed(projects);
         res.send(projects);
     }));
 
@@ -56,6 +59,19 @@ api.patch('/projects/:parentProjectId/child-projects/positions',
         const {oldIdx, newIdx} = req.body;
         moveProject(rootProject, parentProjectId, oldIdx, newIdx);
         res.status(200).send();
+    }));
+
+api.get('/projects/:parentProjectId/children',
+    wrap(async (req, res) => {
+        const {parentProjectId} = req.params;
+        const rootProject = await getProjectsForSession(req);
+        let project = findProject(rootProject, parentProjectId);
+        project = filterCollapsed(project);
+        
+        res.status(200).send({
+            buildTypes: project.buildTypes,
+            childProjects: project.childProjects
+        });
     }));
 
 /**

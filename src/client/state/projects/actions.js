@@ -13,7 +13,10 @@ export const types = {
     EXPAND_PROJECT: 'expand project',
     SHOW_PROJECT: 'show project',
     HIDE_PROJECT: 'hide project',
-    MOVE_PROJECT: 'move project'
+    MOVE_PROJECT: 'move project',
+
+    PROJECT_CHILDREN_LOADING: 'project children loading',
+    PROJECT_CHILDREN_LOADED: 'project children loaded'
 };
 
 /**
@@ -23,12 +26,34 @@ export const types = {
 export const onInit = () => async dispatch => {
 
     // TODO: handle rest api errors
-    const response = await api('GET', '/projects');
-    const rootProject = await response.json();
-
+    const rootProject = await api('GET', '/projects');
+    
     dispatch({
         type: types.PROJECTS_LOADED,
         rootProject
+    });
+};
+
+/**
+ * Loads children (child projects, build types) to project
+ * @param {string} parentProjectId 
+ * @return {function}
+ */
+export const loadChildren = parentProjectId => async dispatch => {
+
+    dispatch({
+        type: types.PROJECT_CHILDREN_LOADING,
+        parentProjectId
+    });
+
+    const {childProjects, buildTypes} =
+        await api('GET', `/projects/${parentProjectId}/children`);
+
+    dispatch({
+        type: types.PROJECT_CHILDREN_LOADED,
+        parentProjectId,
+        childProjects,
+        buildTypes
     });
 };
 
@@ -52,7 +77,9 @@ export const collapseProject = projectId => dispatch => {
  * @param {string} projectId 
  * @return {function}
  */
-export const expandProject = projectId => dispatch => {
+export const expandProject = projectId => async (dispatch, getState) => {
+    const state = getState();
+    const project = findProject(state.rootProject, projectId);
 
     api('DELETE', `/projects/${projectId}/vis/collapsed`);
 
@@ -60,6 +87,11 @@ export const expandProject = projectId => dispatch => {
         type: types.EXPAND_PROJECT,
         projectId
     });
+
+    if (project.childProjects === null) {
+        // child projects not loaded yet
+        await dispatch(loadChildren(projectId));
+    }
 };
 
 /**

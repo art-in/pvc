@@ -11,11 +11,17 @@ const sessionParam = `session=${sessionId}`;
  * @return {promise.<*>}
  */
 export default async function api(method, url, body) {
-    return await fetch(`api${url}?${sessionParam}`, {
+    const response = await fetch(`api${url}?${sessionParam}`, {
         headers: {
             ['Content-Type']: 'application/json'
         },
         method,
         body: JSON.stringify(body)
     });
+
+    const headers = response.headers;
+    if (headers.has('Content-Type') &&
+        headers.get('Content-Type').startsWith('application/json')) {
+        return await response.json();
+    }
 }

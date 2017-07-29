@@ -15,6 +15,7 @@ export async function getProjects() {
 
     // 'content-type: application/json' does not take effect on service
     // 'application/xml' received anyway
+    // TODO: use response.xml mock if request failed
     const response = await fetch(`${defaultUrl}${path}`);
 
     const contentType = response.headers.get('content-type');
@@ -34,6 +35,7 @@ export async function getProjects() {
     validateProjectsResponse(data);
 
     data = buildTree(data);
+
     return data;
 }
 
