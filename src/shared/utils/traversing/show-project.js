@@ -13,7 +13,12 @@ export default function showProject(rootProject, projectId) {
     bubble(rootProject, projectId,
         p => {
             p.vis.visible = true;
-            p.vis.collapsed = false;
+
+            if (p.id !== projectId) {
+                // expand parent projects only, since
+                // target project can be not fully loaded
+                p.vis.collapsed = false;
+            }
         });
     forEachProject(project,
         p => p.vis.visible = true);

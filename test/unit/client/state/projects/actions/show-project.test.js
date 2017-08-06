@@ -181,7 +181,7 @@ describe('showProject', () => {
         const state = store.getState();
         const root = state.rootProject;
 
-        expect(findProject(root, 'proj-1-a').vis.collapsed).to.equal(false);
+        expect(findProject(root, 'proj-1-a').vis.collapsed).to.equal(true);
         expect(findProject(root, 'proj-1').vis.collapsed).to.equal(false);
         expect(findProject(root, '_Root').vis.collapsed).to.equal(false);
         expect(findProject(root, 'proj-2').vis.collapsed).to.equal(true);
