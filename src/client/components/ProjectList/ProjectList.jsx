@@ -25,6 +25,12 @@ export default class ProjectList extends Component {
         const {onStartConfiguration, onStopConfiguration} = this.props;
         const {onCollapseAll, onExpandAll, onSearch} = this.props;
 
+        const rootLoaded = Boolean(rootProject);
+
+        const hasProjects = rootLoaded &&
+            rootProject.childProjects &&
+            rootProject.childProjects.length > 0;
+
         return (
             <div className={classes.root}>
                 <div className={classes['header']}>
@@ -50,11 +56,19 @@ export default class ProjectList extends Component {
                     </span>
                 </div>
 
-                {rootProject ?
-                    <Project projectId={'_Root'} />
-                    :
-                    <Waiter />
-                }
+                {rootLoaded &&
+                    <Project projectId={rootProject.id}
+                        collapsable={false}
+                        movable={false} />}
+
+                {rootLoaded && !hasProjects &&
+                    <span className={classes['no-projects']}>
+                        There are no projects to show.
+                        Please configure visible projects.
+                    </span>}
+
+                {!rootLoaded && <Waiter />}
+                
             </div>
         );
     }

@@ -104,6 +104,45 @@ describe('filter-collapsed', () => {
 
         });
 
+    it('should not remove children of root project',
+        () => {
+            // setup
+            const tree = {
+                id: '_Root',
+                vis: {
+                    collapsed: true
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
+                    parentProjectId: '_Root',
+                    vis: {
+                        collapsed: true
+                    },
+                    buildTypes: [{
+                        id: 'build-1',
+                        name: 'build-1'
+                    }],
+                    childProjects: [{
+                        id: 'proj-1-a',
+                        parentProjectId: 'proj-1',
+                        vis: {
+                            collapsed: true
+                        },
+                        childProjects: []
+                    }]
+                }]
+            };
+
+            // target
+            const rootProject = filterCollapsed(tree);
+
+            // expect
+            expect(rootProject).to.exist;
+            expect(rootProject.childProjects).to.not.equal(null);
+            expect(rootProject.buildTypes).to.not.equal(null);
+        });
+
     it('should not change original tree', () => {
 
         // setup
@@ -126,8 +165,11 @@ describe('filter-collapsed', () => {
         const rootProject = filterCollapsed(tree);
 
         // expect
-        expect(rootProject.childProjects).to.equal(null);
-        expect(tree.childProjects).to.not.equal(null);
+        const originalChild = rootProject.childProjects[0];
+        expect(originalChild.childProjects).to.equal(null);
+
+        const resultChild = tree.childProjects[0];
+        expect(resultChild.childProjects).to.not.equal(null);
     });
 
 });

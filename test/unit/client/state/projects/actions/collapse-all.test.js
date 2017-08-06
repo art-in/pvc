@@ -61,7 +61,7 @@ describe('collapseAll', () => {
 
             const visibleRootProject = state.visibleRootProject;
             expect(visibleRootProject.vis.collapsed).to.equal(true);
-            expect(visibleRootProject.childProjects).to.equal(null);
+            expect(visibleRootProject.childProjects).to.not.equal(null);
         });
 
     it('should collapse all projects if configuration mode',
@@ -113,7 +113,7 @@ describe('collapseAll', () => {
 
             const visibleRootProject = state.visibleRootProject;
             expect(visibleRootProject.vis.collapsed).to.equal(true);
-            expect(visibleRootProject.childProjects).to.equal(null);
+            expect(visibleRootProject.childProjects).to.not.equal(null);
         });
 
     it('should call rest api', async () => {

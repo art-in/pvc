@@ -11,7 +11,8 @@ export default function filterCollapsed(rootProject) {
     const result = clone(rootProject);
 
     forEachProject(result, p => {
-        if (p.vis.collapsed) {
+        // children of root project cannot be filtered
+        if (p.vis.collapsed && p.id !== rootProject.id) {
             p.childProjects = null;
             p.buildTypes = null;
         }

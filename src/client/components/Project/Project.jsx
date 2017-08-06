@@ -29,6 +29,9 @@ export default class Project extends Component {
             }).isRequired
         }).isRequired,
         
+        collapsable: PropTypes.bool,
+        movable: PropTypes.bool,
+
         isConfiguring: PropTypes.bool.isRequired,
         isFiltering: PropTypes.bool.isRequired,
         searchStr: PropTypes.string,
@@ -46,6 +49,11 @@ export default class Project extends Component {
         useDragAndDrop: PropTypes.bool.isRequired,
         DragHandle: PropTypes.func
     }
+
+    static defaultProps = {
+        collapsable: true,
+        movable: true
+    };
 
     shouldComponentUpdate(nextProps) {
         const project = this.props.project;
@@ -74,22 +82,25 @@ export default class Project extends Component {
         const {isConfiguring, onExpand, onCollapse} = this.props;
         const {onShow, onHide, isFiltering, searchStr} = this.props;
         const {onMoveUp, onMoveDown, onMove} = this.props;
-        const {DragHandle, useDragAndDrop} = this.props;
+        const {DragHandle, useDragAndDrop, collapsable, movable} = this.props;
         
         const buildTypesLoaded = Boolean(buildTypes && buildTypes.length);
         const childProjectsLoaded = Boolean(
             childProjects && childProjects.length);
         
         const childrenLoaded = buildTypesLoaded || childProjectsLoaded;
-        const showChild = (!collapsed || isFiltering) &&
+        const showChild = (!collapsable || !collapsed || isFiltering) &&
             (childrenLoading || childrenLoaded);
             
         return (
-            <div className={cx(classes.root, {[classes.hidden]: !visible})}>
+            <div className={cx(classes.root,
+                {[classes.hidden]: isConfiguring && !visible})}>
 
                 <ProjectHeader
                     name={name}
                     visible={visible}
+                    collapsable={collapsable}
+                    movable={movable}
                     isConfiguring={isConfiguring}
                     collapsed={collapsed}
                     searchStr={searchStr}

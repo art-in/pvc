@@ -12,6 +12,9 @@ export default class ProjectHeader extends Component {
         name: PropTypes.string.isRequired,
         visible: PropTypes.bool.isRequired,
 
+        collapsable: PropTypes.bool,
+        movable: PropTypes.bool,
+
         isConfiguring: PropTypes.bool.isRequired,
         collapsed: PropTypes.bool.isRequired,
         searchStr: PropTypes.string,
@@ -33,17 +36,19 @@ export default class ProjectHeader extends Component {
         const {isConfiguring, collapsed, onExpand, onCollapse} = this.props;
         const {name, visible, searchStr, onShow, onHide} = this.props;
         const {onMoveUp, onMoveDown, DragHandle, useDragAndDrop} = this.props;
+        const {collapsable, movable} = this.props;
 
         const dnd = useDragAndDrop && DragHandle;
 
         return (
             <div className={classes.header}>
-                <span className={cx({
-                    [classes.collapse]: !collapsed,
-                    [classes.expand]: collapsed})}
-                onClick={collapsed ? onExpand : onCollapse}>
-                    {collapsed ? 'expand' : 'collapse'}
-                </span>
+                {collapsable &&
+                    <span className={cx({
+                        [classes.collapse]: !collapsed,
+                        [classes.expand]: collapsed})}
+                    onClick={collapsed ? onExpand : onCollapse}>
+                        {collapsed ? 'expand' : 'collapse'}
+                    </span>}
 
                 <Marker className={classes.name}
                     str={name} markStr={searchStr} />
@@ -51,15 +56,15 @@ export default class ProjectHeader extends Component {
                 {isConfiguring &&
                     <span className={classes.config}>
 
-                        {dnd && <DragHandle />}
+                        {movable && dnd && <DragHandle />}
 
-                        {!dnd &&
+                        {movable && !dnd &&
                             <span className={classes.up}
                                 onClick={onMoveUp}>
                                 {'up'}
                             </span>}
 
-                        {!dnd &&
+                        {movable && !dnd &&
                             <span className={classes.down}
                                 onClick={onMoveDown}>
                                 {'down'}

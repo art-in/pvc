@@ -29,6 +29,9 @@ export default connect(
         isFiltering: state.filter.projectIds !== null ||
             state.filter.buildTypeIds !== null,
 
+        collapsable: ownProps.collapsable,
+        movable: ownProps.movable,
+
         searchStr: state.search.str,
 
         useDragAndDrop: state.useDragAndDrop,
