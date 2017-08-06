@@ -5,17 +5,33 @@ import types from 'prop-types';
 import checkTypes from 'check-prop-types';
 import buildTree from '../../shared/utils/traversing/build-tree';
 
+import mock from './mock/response.json';
+
 /**
  * Gets projects from service
  * @return {object}
  */
 export async function getProjects() {
+    try {
+        return await loadAndParseProjects();
+    } catch (e) {
+        console.error(
+            `Error: unable to load projects from service: ${e.message}'`);
+        console.warn('Using projects mock');
+        return mock;
+    }
+}
+
+/**
+ * Loads and parses projects tree from service
+ * @return {object}
+ */
+async function loadAndParseProjects() {
 
     const {defaultUrl, path} = config.projectsService;
 
     // 'content-type: application/json' does not take effect on service
     // 'application/xml' received anyway
-    // TODO: use response.xml mock if request failed
     const response = await fetch(`${defaultUrl}${path}`);
 
     const contentType = response.headers.get('content-type');

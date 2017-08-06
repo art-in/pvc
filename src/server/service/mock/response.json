@@ -898,8 +898,8 @@
                     "childProjects": []
                 },
                 {
-                    "id": "OpenSourceProjects_SerializationInspectionsReSharperExtension",
-                    "name": "Serialization Inspections ReSharper Extension",
+                    "id": "OpenSourceProjects_SerializationInspections",
+                    "name": "Serialization Inspections",
                     "parentProjectId": "OpenSourceProjects",
                     "buildTypes": [
                         {
@@ -8205,7 +8205,12 @@
                             "id": "Testfx",
                             "name": "TestFx",
                             "parentProjectId": "matkoch",
-                            "buildTypes": [],
+                            "buildTypes": [
+                                {
+                                    "id": "Testfx_Asd",
+                                    "name": "asd"
+                                }
+                            ],
                             "vis": {
                                 "collapsed": true,
                                 "visible": true
@@ -11833,22 +11838,6 @@
                             "childProjects": []
                         },
                         {
-                            "id": "TeamCityPluginsByJetBrains_TeamcityVcsHostingLinks",
-                            "name": "TeamCity Vcs Hosting Links",
-                            "parentProjectId": "TeamCityPluginsByJetBrains",
-                            "buildTypes": [
-                                {
-                                    "id": "TeamCityPluginsByJetBrains_TeamcityVcsHostingLinks_Build",
-                                    "name": "Build"
-                                }
-                            ],
-                            "vis": {
-                                "collapsed": true,
-                                "visible": true
-                            },
-                            "childProjects": []
-                        },
-                        {
                             "id": "TeamCityPluginsByJetBrains_TeamCityRunAs",
                             "name": "TeamCity runAs",
                             "parentProjectId": "TeamCityPluginsByJetBrains",
@@ -12449,6 +12438,22 @@
                                 {
                                     "id": "bt203",
                                     "name": "Swabra (5.1.x branch against TeamCity 5.1.x)"
+                                }
+                            ],
+                            "vis": {
+                                "collapsed": true,
+                                "visible": true
+                            },
+                            "childProjects": []
+                        },
+                        {
+                            "id": "TeamCityPluginsByJetBrains_TeamcityVcsHostingLinks",
+                            "name": "TeamCity Vcs Hosting Links",
+                            "parentProjectId": "TeamCityPluginsByJetBrains",
+                            "buildTypes": [
+                                {
+                                    "id": "TeamCityPluginsByJetBrains_TeamcityVcsHostingLinks_Build",
+                                    "name": "Build"
                                 }
                             ],
                             "vis": {
@@ -15151,6 +15156,14 @@
                             "name": "Icons"
                         },
                         {
+                            "id": "JetBrainsUi_Lerna",
+                            "name": "Lerna"
+                        },
+                        {
+                            "id": "JetBrainsUi_Logos",
+                            "name": "Logos"
+                        },
+                        {
                             "id": "JetBrainsUi_StylelintConfig",
                             "name": "Stylelint Config"
                         }
@@ -15159,7 +15172,48 @@
                         "collapsed": true,
                         "visible": true
                     },
-                    "childProjects": []
+                    "childProjects": [
+                        {
+                            "id": "JetBrainsUi_RingUi",
+                            "name": "Ring UI",
+                            "parentProjectId": "JetBrainsUi",
+                            "buildTypes": [
+                                {
+                                    "id": "JetBrainsUi_RingUi_Build",
+                                    "name": "Build test"
+                                },
+                                {
+                                    "id": "JetBrainsUi_RingUi_Deploy",
+                                    "name": "Deploy"
+                                },
+                                {
+                                    "id": "JetBrainsUi_RingUi_GeneratorE2eTest",
+                                    "name": "Generator E2E test"
+                                },
+                                {
+                                    "id": "JetBrainsUi_RingUi_PublishCanary",
+                                    "name": "Publish @canary"
+                                },
+                                {
+                                    "id": "JetBrainsUi_RingUi_Publish",
+                                    "name": "Publish @latest"
+                                },
+                                {
+                                    "id": "JetBrainsUi_RingUi_PublishNext",
+                                    "name": "Publish @next"
+                                },
+                                {
+                                    "id": "JetBrainsUi_RingUi_Test",
+                                    "name": "Unit Tests"
+                                }
+                            ],
+                            "vis": {
+                                "collapsed": true,
+                                "visible": true
+                            },
+                            "childProjects": []
+                        }
+                    ]
                 },
                 {
                     "id": "Kara",
@@ -15229,6 +15283,10 @@
                         {
                             "id": "Xodus_Build",
                             "name": "Build"
+                        },
+                        {
+                            "id": "Xodus_BuildBranchYoutrack20173",
+                            "name": "Build Branch youtrack-2017.3"
                         },
                         {
                             "id": "Xodus_BuildBranchYoutrack70hub20",
