@@ -15,6 +15,12 @@ import searchTree from '../shared/utils/traversing/search-tree';
 
 const api = new express.Router();
 
+api.use((req, res, next) => {
+    // prevent api response cache in ie9
+    res.setHeader('cache-control', 'no-cache');
+    next();
+});
+
 api.get('/projects',
     wrap(async (req, res) => {
         let projects = await getProjectsForSession(req);
