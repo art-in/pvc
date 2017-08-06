@@ -1,3 +1,5 @@
+/* global process */
+
 import {createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
 import {createLogger} from 'redux-logger';
@@ -6,12 +8,19 @@ import rootReducer from './root-reducer';
 /**
  * State store.
  */
-const store = createStore(rootReducer, applyMiddleware(
-    thunk,
-    createLogger({
+const middlewares = [];
+
+middlewares.push(thunk);
+
+// do not log in production
+if (process.env.NODE_ENV !== 'production') {
+    middlewares.push(createLogger({
         collapsed: true,
         timestamp: false
-    })));
+    }));
+}
+
+const store = createStore(rootReducer, applyMiddleware(...middlewares));
 
 if (module.hot) {
     // Enable Webpack hot module replacement for reducers
