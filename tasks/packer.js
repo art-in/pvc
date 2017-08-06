@@ -27,6 +27,7 @@ const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
  * @param {object}  [opts.devServer] - dev server (bundle HMR)
  * @param {string}  [opts.devServer.host]
  * @param {string}  [opts.devServer.port]
+ * @param {bool}    [opts.supportOldBrowsers=false] - target browser is < ie11
  *
  * @return {object} config
  */
@@ -82,6 +83,7 @@ function getPackConfig(opts) {
     }
 
     entries.push('babel-polyfill');
+    entries.push('whatwg-fetch');
 
     if (opts.entry) {
         // entry point not always required
@@ -110,7 +112,12 @@ function getPackConfig(opts) {
                 use: loaders.js.concat([
                     {loader: 'babel-loader'}
                 ]),
-                exclude: [/node_modules/]
+                // many npm packages does not support old browsers,
+                // so we need to transpile them to es3. some of them
+                // cannot be transpiled, so use direct exclusions
+                exclude: opts.supportOldBrowsers ?
+                    /core-js/ :
+                    /node_modules/
             }, {
                 test: /\.css$/,
                 use: [{
@@ -121,6 +128,8 @@ function getPackConfig(opts) {
                         modules: true,
                         localIdentName: '[name]-[local]'
                     }
+                }, {
+                    loader: 'postcss-loader'
                 }]
             }]
         },

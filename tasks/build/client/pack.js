@@ -8,6 +8,7 @@ module.exports = {
             root: config.src.path,
             entry: config.src.client.entry,
             minimize: true,
+            supportOldBrowsers: true,
             output: {
                 path: config.src.client.output.bundle.path,
                 urlPath: config.src.client.output.bundle.urlPath,
