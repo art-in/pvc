@@ -1,6 +1,6 @@
 import {connect} from 'react-redux';
 import Component from './App';
-import * as projects from '../../state/projects/actions';
+import onInit from 'client/state/projects/actions/on-init';
 
 export default connect(
     state => ({
@@ -8,7 +8,7 @@ export default connect(
     }),
     dispatch => ({
         onComponentDidMount: () => {
-            dispatch(projects.onInit());
+            dispatch(onInit());
         }
     })
 )(Component);

@@ -1,7 +1,11 @@
 import {connect} from 'react-redux';
 import Component from './ProjectList';
 
-import * as projects from '../../state/projects/actions';
+import startConfig from 'client/state/projects/actions/start-configuration';
+import stopConfig from 'client/state/projects/actions/stop-configuration';
+import collapseAll from 'client/state/projects/actions/collapse-all';
+import expandAll from 'client/state/projects/actions/expand-all';
+import search from 'client/state/projects/actions/search';
 
 export default connect(
     state => ({
@@ -11,14 +15,14 @@ export default connect(
     }),
     dispatch => ({
         onStartConfiguration: () =>
-            dispatch(projects.startConfiguration()),
+            dispatch(startConfig()),
         onStopConfiguration: () =>
-            dispatch(projects.stopConfiguration()),
+            dispatch(stopConfig()),
         onCollapseAll: () =>
-            dispatch(projects.collapseAll()),
+            dispatch(collapseAll()),
         onExpandAll: () =>
-            dispatch(projects.expandAll()),
+            dispatch(expandAll()),
         onSearch: searchStr =>
-            dispatch(projects.search(searchStr))
+            dispatch(search(searchStr))
     })
 )(Component);

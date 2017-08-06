@@ -1,7 +1,14 @@
 import {connect} from 'react-redux';
 import Component from './Project';
-import * as projects from '../../state/projects/actions';
 import findProject from 'shared/utils/traversing/find-project';
+
+import expandProject from 'client/state/projects/actions/expand-project';
+import collapseProject from 'client/state/projects/actions/collapse-project';
+import showProject from 'client/state/projects/actions/show-project';
+import hideProject from 'client/state/projects/actions/hide-project';
+import moveProjectUp from 'client/state/projects/actions/move-project-up';
+import moveProjectDown from 'client/state/projects/actions/move-project-down';
+import moveProject from 'client/state/projects/actions/move-project';
 
 export default connect(
     (state, ownProps) => ({
@@ -28,18 +35,18 @@ export default connect(
     }),
     dispatch => ({
         onExpand: projectId =>
-            dispatch(projects.expandProject(projectId)),
+            dispatch(expandProject(projectId)),
         onCollapse: projectId =>
-            dispatch(projects.collapseProject(projectId)),
+            dispatch(collapseProject(projectId)),
         onShow: projectId =>
-            dispatch(projects.showProject(projectId)),
+            dispatch(showProject(projectId)),
         onHide: projectId =>
-            dispatch(projects.hideProject(projectId)),
+            dispatch(hideProject(projectId)),
         onMoveUp: projectId =>
-            dispatch(projects.moveProjectUp(projectId)),
+            dispatch(moveProjectUp(projectId)),
         onMoveDown: projectId =>
-            dispatch(projects.moveProjectDown(projectId)),
+            dispatch(moveProjectDown(projectId)),
         onMove: (projectId, {oldIndex, newIndex}) =>
-            dispatch(projects.moveProject(projectId, oldIndex, newIndex))
+            dispatch(moveProject(projectId, oldIndex, newIndex))
     })
 )(Component);

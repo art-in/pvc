@@ -1,4 +1,4 @@
-import {types} from './actions';
+import types from './actions/types';
 import clone from 'shared/utils/clone';
 
 import collapseProject from 'shared/utils/traversing/collapse-project';

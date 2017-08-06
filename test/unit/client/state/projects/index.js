@@ -1,0 +1,3 @@
+describe('projects', () => {
+    require('./actions');
+});

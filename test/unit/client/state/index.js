@@ -1,3 +1,3 @@
 describe('state', () => {
-    require('./projects.test');
+    require('./projects');
 });
