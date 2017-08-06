@@ -7,9 +7,7 @@
 }
 
 .drag-handle {
-    /* TODO: setup autoprefixer */
     cursor: grab;
-    cursor: -webkit-grab;
 }
 
 .drag-ghost,
@@ -18,7 +16,6 @@
      https://github.com/clauderic/react-sortable-hoc/issues/212 */
     pointer-events: auto !important;
     cursor: grabbing;
-    cursor: -webkit-grabbing;
     font-size: 17px;
 }
 
