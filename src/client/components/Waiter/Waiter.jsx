@@ -13,9 +13,9 @@ export default class Waiter extends Component {
     render() {
         const {className} = this.props;
         return (
-            <div className={cx(classes.root, className)}>
+            <span className={cx(classes.root, className)}>
                 loading ...
-            </div>
+            </span>
         );
     }
 }

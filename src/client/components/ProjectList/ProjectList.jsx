@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 
 import Project from '../Project';
 import Waiter from '../Waiter';
+import SearchBox from '../SearchBox';
 
 import classes from './ProjectList.css';
 
@@ -11,16 +12,18 @@ export default class ProjectList extends Component {
     static propTypes = {
         rootProject: PropTypes.object,
         isConfiguring: PropTypes.bool.isRequired,
+        isSearching: PropTypes.bool.isRequired,
         onStartConfiguration: PropTypes.func.isRequired,
         onStopConfiguration: PropTypes.func.isRequired,
         onCollapseAll: PropTypes.func.isRequired,
-        onExpandAll: PropTypes.func.isRequired
+        onExpandAll: PropTypes.func.isRequired,
+        onSearch: PropTypes.func.isRequired
     }
 
     render() {
-        const {rootProject, isConfiguring} = this.props;
+        const {rootProject, isConfiguring, isSearching} = this.props;
         const {onStartConfiguration, onStopConfiguration} = this.props;
-        const {onCollapseAll, onExpandAll} = this.props;
+        const {onCollapseAll, onExpandAll, onSearch} = this.props;
 
         return (
             <div className={classes.root}>
@@ -34,6 +37,8 @@ export default class ProjectList extends Component {
                         onClick={onExpandAll}>
                         expand all
                     </span>
+
+                    <SearchBox onChange={onSearch} isSearching={isSearching} />
                     
                     <span className={classes['config-btn']}
                         onClick={isConfiguring ?

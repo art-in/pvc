@@ -1,12 +1,10 @@
 import React from 'react';
 import {mount} from 'enzyme';
 import {expect} from 'chai';
-import configureStore from 'redux-mock-store';
 import {Provider} from 'react-redux';
+import mockStore from 'test/utils/mock-store';
 
 import Project from 'src/client/components/Project';
-
-const mockStore = configureStore();
 
 describe('Project', () => {
 
@@ -14,7 +12,7 @@ describe('Project', () => {
 
         // setup
         const store = mockStore({
-            rootProject: {
+            visibleRootProject: {
                 id: '_Root',
                 name: '<Root project>',
                 childProjects: [],
@@ -42,7 +40,7 @@ describe('Project', () => {
         
         // setup
         const store = mockStore({
-            rootProject: {
+            visibleRootProject: {
                 id: '_Root',
                 name: '<Root project>',
                 childProjects: [],
@@ -68,11 +66,44 @@ describe('Project', () => {
         expect(target.text()).to.equal('<Root project>');
     });
 
+    it('should highlight search string in project name', () => {
+        
+        // setup
+        const store = mockStore({
+            visibleRootProject: {
+                id: '_Root',
+                name: '<Root project>',
+                childProjects: [],
+                buildTypes: [],
+                vis: {
+                    collapsed: false,
+                    visible: true
+                }
+            },
+            isConfiguringVisibility: false,
+            search: {
+                str: 'project'
+            }
+        });
+
+        // target
+        const wrapper = mount(
+            <Provider store={store}>
+                <Project projectId={'_Root'} />
+            </Provider>
+        );
+        
+        // check
+        const target = wrapper.find('.Marker-highlight');
+        expect(target).to.have.length(1);
+        expect(target.text()).to.equal('project');
+    });
+
     it('should render child projects', () => {
 
         // setup
         const store = mockStore({
-            rootProject: {
+            visibleRootProject: {
                 id: '_Root',
                 name: '<Root project>',
                 childProjects: [{
@@ -117,7 +148,7 @@ describe('Project', () => {
 
         // setup
         const store = mockStore({
-            rootProject: {
+            visibleRootProject: {
                 id: '_Root',
                 name: '<Root project>',
                 childProjects: [],
@@ -150,11 +181,11 @@ describe('Project', () => {
         expect(target.at(1).text()).to.equal('BUILD: Build 2');
     });
 
-    it('should not render build types in config mode', () => {
-        
+    it('should highlight search string in build type names', () => {
+
         // setup
         const store = mockStore({
-            rootProject: {
+            visibleRootProject: {
                 id: '_Root',
                 name: '<Root project>',
                 childProjects: [],
@@ -170,7 +201,10 @@ describe('Project', () => {
                     visible: true
                 }
             },
-            isConfiguringVisibility: true
+            isConfiguringVisibility: false,
+            search: {
+                str: 'Build'
+            }
         });
 
         // target
@@ -181,14 +215,16 @@ describe('Project', () => {
         );
         
         // check
-        const target = wrapper.find('.Project-build-types .BuildType-root');
-        expect(target).to.have.length(0);
+        const target = wrapper.find('.Project-build-types .Marker-highlight');
+        expect(target).to.have.length(2);
+        expect(target.at(0).text()).to.equal('Build');
+        expect(target.at(1).text()).to.equal('Build');
     });
 
     it('should not render children if collapsed', () => {
         // setup
         const store = mockStore({
-            rootProject: {
+            visibleRootProject: {
                 id: '_Root',
                 name: '<Root project>',
                 childProjects: [{
@@ -232,7 +268,7 @@ describe('Project', () => {
 
         // setup
         const store = mockStore({
-            rootProject: {
+            visibleRootProject: {
                 id: '_Root',
                 name: '<Root project>',
                 childProjects: [],
@@ -261,7 +297,7 @@ describe('Project', () => {
         
         // setup
         const store = mockStore({
-            rootProject: {
+            visibleRootProject: {
                 id: '_Root',
                 name: '<Root project>',
                 childProjects: [],
@@ -290,7 +326,7 @@ describe('Project', () => {
 
         // setup
         const store = mockStore({
-            rootProject: {
+            visibleRootProject: {
                 id: '_Root',
                 name: '<Root project>',
                 vis: {
@@ -316,12 +352,11 @@ describe('Project', () => {
         expect(target).to.have.length(1);
     });
 
-
     it('should not render waiter when not loading children', () => {
 
         // setup
         const store = mockStore({
-            rootProject: {
+            visibleRootProject: {
                 id: '_Root',
                 name: '<Root project>',
                 vis: {
@@ -345,6 +380,54 @@ describe('Project', () => {
         // check
         const target = wrapper.find('.Waiter-root');
         expect(target).to.have.length(0);
+    });
+
+    it('should expand projects when filtering', () => {
+        
+        // setup
+        const store = mockStore({
+            visibleRootProject: {
+                id: '_Root',
+                name: '<Root project>',
+                vis: {
+                    collapsed: true,
+                    visible: true
+                },
+                childProjects: [{
+                    id: 'proj-1',
+                    name: 'proj-1',
+                    parentProjectId: '_Root',
+                    vis: {
+                        collapsed: true,
+                        visible: true
+                    },
+                    childProjects: [],
+                    buildTypes: [{
+                        id: 'build-1',
+                        name: 'build-1'
+                    }]
+                }],
+                buildTypes: []
+            },
+            isConfiguringVisibility: false,
+            filter: {
+                projectIds: ['_Root', 'proj-1']
+            }
+        });
+
+        // target
+        const wrapper = mount(
+            <Provider store={store}>
+                <Project projectId={'_Root'} />
+            </Provider>
+        );
+
+        // check
+        const projects = wrapper.find('.Project-root');
+        expect(projects).to.have.length(2);
+
+        const buildTypes = wrapper.find('.BuildType-root');
+        expect(buildTypes).to.have.length(1);
     });
 
 });

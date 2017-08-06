@@ -33,3 +33,8 @@
 .build-types {
     margin-top: 4px;
 }
+
+.waiter {
+    display: block;
+    text-align: center;
+}

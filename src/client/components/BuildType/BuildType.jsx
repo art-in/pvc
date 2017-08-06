@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 
+import Marker from '../Marker';
+
 import classes from './BuildType.css';
 
 export default class BuildType extends Component {
@@ -9,15 +11,16 @@ export default class BuildType extends Component {
         build: PropTypes.shape({
             id: PropTypes.string.isRequired,
             name: PropTypes.string.isRequired
-        }).isRequired
+        }).isRequired,
+        searchStr: PropTypes.string
     }
 
     render() {
-        const {build} = this.props;
+        const {build, searchStr} = this.props;
 
         return (
             <div className={classes.root}>
-                BUILD: {build.name}
+                BUILD: <Marker str={build.name} markStr={searchStr} />
             </div>
         );
     }

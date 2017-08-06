@@ -16,9 +16,14 @@ export default connect(
         //   and redux will force component update on that fragment change.
         //   in this case re-render will be called separately on each project 
         //   component, which allows us to use 'shouldComponentUpdate'
-        project: findProject(state.rootProject, ownProps.projectId),
+        project: findProject(state.visibleRootProject, ownProps.projectId),
 
         isConfiguring: state.isConfiguringVisibility,
+        isFiltering: state.filter.projectIds !== null ||
+            state.filter.buildTypeIds !== null,
+
+        searchStr: state.search.str,
+
         DragHandle: ownProps.DragHandle
     }),
     dispatch => ({

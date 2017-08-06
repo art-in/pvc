@@ -9,7 +9,9 @@ import showProject from '../shared/utils/traversing/show-project';
 import hideProject from '../shared/utils/traversing/hide-project';
 import moveProject from '../shared/utils/traversing/move-project';
 import filterCollapsed from '../shared/utils/traversing/filter-collapsed';
+import filterProjects from '../shared/utils/traversing/filter-projects';
 import findProject from '../shared/utils/traversing/find-project';
+import searchTree from '../shared/utils/traversing/search-tree';
 
 const api = new express.Router();
 
@@ -71,6 +73,25 @@ api.get('/projects/:parentProjectId/children',
         res.status(200).send({
             buildTypes: project.buildTypes,
             childProjects: project.childProjects
+        });
+    }));
+
+api.get('/projects/search',
+    wrap(async (req, res) => {
+        const {s: searchStr} = req.query;
+        const rootProject = await getProjectsForSession(req);
+        
+        const {projectIds, buildTypeIds} = searchTree(rootProject, searchStr);
+        
+        let tree = null;
+        if (projectIds.length) {
+            tree = filterProjects(rootProject, projectIds, {childOnly: true});
+        }
+
+        res.status(200).send({
+            tree,
+            projectIds,
+            buildTypeIds
         });
     }));
 

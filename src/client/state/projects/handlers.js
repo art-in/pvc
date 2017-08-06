@@ -7,13 +7,15 @@ import showProject from 'shared/utils/traversing/show-project';
 import hideProject from 'shared/utils/traversing/hide-project';
 import moveProject from 'shared/utils/traversing/move-project';
 import findProject from 'shared/utils/traversing/find-project';
+import extendTree from 'shared/utils/traversing/extend-tree';
+import filterVisible from 'shared/utils/traversing/filter-visible';
 
 export default (oldState, action) => {
 
     const state = clone(oldState);
 
     switch (action.type) {
-    case types.PROJECTS_LOADED:
+    case types.SET_PROJECTS_TREE:
         state.rootProject = action.rootProject;
         break;
 
@@ -64,9 +66,35 @@ export default (oldState, action) => {
         break;
     }
 
+    case types.SET_PROJECTS_FILTER:
+        state.filter.projectIds = action.projectIds;
+        state.filter.buildTypeIds = action.buildTypeIds;
+        break;
+
+    case types.EXTEND_PROJECTS_TREE:
+        state.rootProject = extendTree(state.rootProject, action.source);
+        break;
+
+    case types.START_SEARCH:
+        state.search.running = true;
+        break;
+
+    case types.END_SEARCH:
+        state.search.running = false;
+        break;
+
+    case types.SET_SEARCH_STRING:
+        state.search.str = action.str;
+        break;
+
     default:
         return oldState;
     }
+
+    state.visibleRootProject = filterVisible(
+        state.rootProject,
+        state.filter,
+        state.isConfiguringVisibility);
 
     return state;
 };

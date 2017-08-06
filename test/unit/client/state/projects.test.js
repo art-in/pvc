@@ -1,11 +1,13 @@
 import {expect} from 'chai';
 
 import * as mockFetch from '../../../utils/mock-fetch';
-import createStore from './create-store';
+import createStore from 'test/utils/create-store';
 import findProject from 'src/shared/utils/traversing/find-project';
 import * as projects from 'src/client/state/projects/actions';
 
 let fetchMock;
+
+// TODO: split up actions to separate files
 
 describe('projects', () => {
 
@@ -29,10 +31,16 @@ describe('projects', () => {
                         collapsed: false,
                         visible: true
                     },
-                    childProjectLoading: false,
-                    childProjects: null
+                    childrenLoading: false,
+                    childProjects: null,
+                    buildTypes: null
                 }
             });
+
+            fetchMock = mockFetch.mock({json: () => ({
+                buildTypes: [],
+                childProjects: []
+            })});
 
             // target
             await store.dispatch(projects.loadChildren('_Root'));
@@ -56,16 +64,22 @@ describe('projects', () => {
                         visible: true
                     },
                     childrenLoading: false,
-                    childProjects: null
+                    childProjects: null,
+                    buildTypes: null
                 }
             });
+
+            fetchMock = mockFetch.mock({json: () => ({
+                buildTypes: [],
+                childProjects: []
+            })});
 
             // target
             await store.dispatch(projects.loadChildren('_Root'));
 
             // check
             const state = store.getState();
-            const rootProject = state.rootProject;
+            const rootProject = state.visibleRootProject;
             expect(rootProject.childrenLoading).to.equal.true;
         });
 
@@ -80,7 +94,8 @@ describe('projects', () => {
                         visible: true
                     },
                     childrenLoading: false,
-                    childProjects: null
+                    childProjects: null,
+                    buildTypes: []
                 }
             });
 
@@ -96,7 +111,8 @@ describe('projects', () => {
                         visible: true
                     },
                     childrenLoading: false,
-                    childProjects: []
+                    childProjects: [],
+                    buildTypes: []
                 }]
             })});
 
@@ -105,7 +121,7 @@ describe('projects', () => {
 
             // check
             const state = store.getState();
-            const rootProject = state.rootProject;
+            const rootProject = state.visibleRootProject;
             expect(rootProject.childrenLoading).to.equal.false;
             expect(rootProject.childProjects).to.deep.equal([{
                 id: 'proj-1',
@@ -114,7 +130,8 @@ describe('projects', () => {
                     visible: true
                 },
                 childrenLoading: false,
-                childProjects: []
+                childProjects: [],
+                buildTypes: []
             }]);
             expect(rootProject.buildTypes).to.deep.equal([{
                 id: 'build-1',
@@ -135,11 +152,13 @@ describe('projects', () => {
                     childProjects: [{
                         id: 'proj-1',
                         childProjects: [],
+                        buildTypes: null,
                         vis: {
                             collapsed: false,
                             visible: true
                         }
                     }],
+                    buildTypes: null,
                     vis: {
                         collapsed: false,
                         visible: true
@@ -152,11 +171,12 @@ describe('projects', () => {
 
             // check
             const state = store.getState();
+            const rootProject = state.visibleRootProject;
 
-            let project = findProject(state.rootProject, '_Root');
+            let project = findProject(rootProject, '_Root');
             expect(project.vis.collapsed).to.equal(false);
 
-            project = findProject(state.rootProject, 'proj-1');
+            project = findProject(rootProject, 'proj-1');
             expect(project.vis.collapsed).to.equal(true);
         });
 
@@ -168,11 +188,13 @@ describe('projects', () => {
                     childProjects: [{
                         id: 'proj-1',
                         childProjects: [],
+                        buildTypes: [],
                         vis: {
                             collapsed: false,
                             visible: true
                         }
                     }],
+                    buildTypes: [],
                     vis: {
                         collapsed: false,
                         visible: true
@@ -204,11 +226,13 @@ describe('projects', () => {
                     childProjects: [{
                         id: 'proj-1',
                         childProjects: [],
+                        buildTypes: [],
                         vis: {
                             collapsed: false,
                             visible: true
                         }
                     }],
+                    buildTypes: [],
                     vis: {
                         collapsed: false,
                         visible: true
@@ -221,11 +245,12 @@ describe('projects', () => {
 
             // check
             const state = store.getState();
+            const rootProject = state.visibleRootProject;
 
-            let project = findProject(state.rootProject, '_Root');
+            let project = findProject(rootProject, '_Root');
             expect(project.vis.collapsed).to.equal(false);
 
-            project = findProject(state.rootProject, 'proj-1');
+            project = findProject(rootProject, 'proj-1');
             expect(project.vis.collapsed).to.equal(false);
         });
 
@@ -237,11 +262,13 @@ describe('projects', () => {
                     childProjects: [{
                         id: 'proj-1',
                         childProjects: [],
+                        buildTypes: [],
                         vis: {
                             collapsed: false,
                             visible: true
                         }
                     }],
+                    buildTypes: [],
                     vis: {
                         collapsed: false,
                         visible: true
@@ -271,9 +298,15 @@ describe('projects', () => {
                         visible: true
                     },
                     childrenLoading: false,
-                    childProjects: null
+                    childProjects: null,
+                    buildTypes: null
                 }
             });
+
+            fetchMock = mockFetch.mock({json: () => ({
+                buildTypes: [],
+                childProjects: []
+            })});
 
             // target
             await store.dispatch(projects.expandProject('_Root'));
@@ -290,7 +323,7 @@ describe('projects', () => {
 
     describe('collapseAll', () => {
 
-        it('should collapse all visible projects if not configuration',
+        it('should collapse only visible projects if not configuration mode',
             async () => {
 
                 // setup
@@ -300,6 +333,7 @@ describe('projects', () => {
                         childProjects: [{
                             id: 'proj-1',
                             childProjects: [],
+                            buildTypes: [],
                             vis: {
                                 collapsed: false,
                                 visible: true
@@ -307,11 +341,13 @@ describe('projects', () => {
                         }, {
                             id: 'proj-2',
                             childProjects: [],
+                            buildTypes: [],
                             vis: {
                                 collapsed: false,
                                 visible: false
                             }
                         }],
+                        buildTypes: [],
                         vis: {
                             collapsed: false,
                             visible: true
@@ -325,18 +361,21 @@ describe('projects', () => {
 
                 // check
                 const state = store.getState();
+                const rootProject = state.rootProject;
+                expect(rootProject.vis.collapsed).to.equal(true);
 
-                let project = state.rootProject;
+                let project = findProject(rootProject, 'proj-1');
                 expect(project.vis.collapsed).to.equal(true);
 
-                project = findProject(state.rootProject, 'proj-1');
-                expect(project.vis.collapsed).to.equal(true);
-
-                project = findProject(state.rootProject, 'proj-2');
+                project = findProject(rootProject, 'proj-2');
                 expect(project.vis.collapsed).to.equal(false);
+
+                const visibleRootProject = state.visibleRootProject;
+                expect(visibleRootProject.vis.collapsed).to.equal(true);
+                expect(visibleRootProject.childProjects).to.equal(null);
             });
 
-        it('should collapse all projects if configuration',
+        it('should collapse all projects if configuration mode',
             async () => {
 
                 // setup
@@ -346,6 +385,7 @@ describe('projects', () => {
                         childProjects: [{
                             id: 'proj-1',
                             childProjects: [],
+                            buildTypes: [],
                             vis: {
                                 collapsed: false,
                                 visible: true
@@ -353,11 +393,13 @@ describe('projects', () => {
                         }, {
                             id: 'proj-2',
                             childProjects: [],
+                            buildTypes: [],
                             vis: {
                                 collapsed: false,
                                 visible: false
                             }
                         }],
+                        buildTypes: [],
                         vis: {
                             collapsed: false,
                             visible: true
@@ -371,15 +413,18 @@ describe('projects', () => {
 
                 // check
                 const state = store.getState();
+                const rootProject = state.rootProject;
+                expect(rootProject.vis.collapsed).to.equal(true);
 
-                let project = state.rootProject;
+                let project = findProject(rootProject, 'proj-1');
                 expect(project.vis.collapsed).to.equal(true);
 
-                project = findProject(state.rootProject, 'proj-1');
+                project = findProject(rootProject, 'proj-2');
                 expect(project.vis.collapsed).to.equal(true);
 
-                project = findProject(state.rootProject, 'proj-2');
-                expect(project.vis.collapsed).to.equal(true);
+                const visibleRootProject = state.visibleRootProject;
+                expect(visibleRootProject.vis.collapsed).to.equal(true);
+                expect(visibleRootProject.childProjects).to.equal(null);
             });
     
         it('should call rest api', async () => {
@@ -391,6 +436,7 @@ describe('projects', () => {
                     childProjects: [{
                         id: 'proj-1',
                         childProjects: [],
+                        buildTypes: [],
                         vis: {
                             collapsed: false,
                             visible: true
@@ -398,11 +444,13 @@ describe('projects', () => {
                     }, {
                         id: 'proj-2',
                         childProjects: [],
+                        buildTypes: [],
                         vis: {
                             collapsed: false,
                             visible: true
                         }
                     }],
+                    buildTypes: [],
                     vis: {
                         collapsed: false,
                         visible: true
@@ -436,7 +484,7 @@ describe('projects', () => {
 
     describe('expandAll', () => {
 
-        it('should expand all visible projects if not configuration',
+        it('should expand only visible projects if not configuration mode',
             async () => {
 
                 // setup
@@ -446,6 +494,7 @@ describe('projects', () => {
                         childProjects: [{
                             id: 'proj-1',
                             childProjects: [],
+                            buildTypes: [],
                             vis: {
                                 collapsed: true,
                                 visible: true
@@ -453,11 +502,13 @@ describe('projects', () => {
                         }, {
                             id: 'proj-2',
                             childProjects: [],
+                            buildTypes: [],
                             vis: {
                                 collapsed: true,
                                 visible: false
                             }
                         }],
+                        buildTypes: [],
                         vis: {
                             collapsed: true,
                             visible: true
@@ -471,18 +522,22 @@ describe('projects', () => {
 
                 // check
                 const state = store.getState();
+                const rootProject = state.rootProject;
 
-                let project = state.rootProject;
+                expect(rootProject.vis.collapsed).to.equal(false);
+
+                let project = findProject(rootProject, 'proj-1');
                 expect(project.vis.collapsed).to.equal(false);
 
-                project = findProject(state.rootProject, 'proj-1');
-                expect(project.vis.collapsed).to.equal(false);
-
-                project = findProject(state.rootProject, 'proj-2');
+                project = findProject(rootProject, 'proj-2');
                 expect(project.vis.collapsed).to.equal(true);
+
+                const visibleRootProject = state.visibleRootProject;
+                expect(visibleRootProject.vis.collapsed).to.equal(false);
+                expect(visibleRootProject.childProjects).to.have.length(1);
             });
 
-        it('should expand all projects if configuration',
+        it('should expand all projects if configuration mode',
             async () => {
 
                 // setup
@@ -492,6 +547,7 @@ describe('projects', () => {
                         childProjects: [{
                             id: 'proj-1',
                             childProjects: [],
+                            buildTypes: [],
                             vis: {
                                 collapsed: true,
                                 visible: true
@@ -499,11 +555,13 @@ describe('projects', () => {
                         }, {
                             id: 'proj-2',
                             childProjects: [],
+                            buildTypes: [],
                             vis: {
                                 collapsed: true,
                                 visible: false
                             }
                         }],
+                        buildTypes: [],
                         vis: {
                             collapsed: true,
                             visible: true
@@ -517,15 +575,19 @@ describe('projects', () => {
 
                 // check
                 const state = store.getState();
+                const rootProject = state.rootProject;
+                
+                expect(rootProject.vis.collapsed).to.equal(false);
 
-                let project = state.rootProject;
+                let project = findProject(rootProject, 'proj-1');
                 expect(project.vis.collapsed).to.equal(false);
 
-                project = findProject(state.rootProject, 'proj-1');
+                project = findProject(rootProject, 'proj-2');
                 expect(project.vis.collapsed).to.equal(false);
 
-                project = findProject(state.rootProject, 'proj-2');
-                expect(project.vis.collapsed).to.equal(false);
+                const visibleRootProject = state.visibleRootProject;
+                expect(visibleRootProject.vis.collapsed).to.equal(false);
+                expect(visibleRootProject.childProjects).to.have.length(2);
             });
     
         it('should call rest api', async () => {
@@ -537,6 +599,7 @@ describe('projects', () => {
                     childProjects: [{
                         id: 'proj-1',
                         childProjects: [],
+                        buildTypes: [],
                         vis: {
                             collapsed: true,
                             visible: true
@@ -544,11 +607,13 @@ describe('projects', () => {
                     }, {
                         id: 'proj-2',
                         childProjects: [],
+                        buildTypes: [],
                         vis: {
                             collapsed: true,
                             visible: true
                         }
                     }],
+                    buildTypes: [],
                     vis: {
                         collapsed: true,
                         visible: true
@@ -593,6 +658,7 @@ describe('projects', () => {
                         collapsed: false,
                         visible: false
                     },
+                    buildTypes: [],
                     childProjects: [{
                         id: 'proj-1',
                         vis: {
@@ -600,6 +666,7 @@ describe('projects', () => {
                             visible: false
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: [{
                             id: 'proj-1-a',
                             vis: {
@@ -607,6 +674,7 @@ describe('projects', () => {
                                 visible: false
                             },
                             parentProjectId: 'proj-1',
+                            buildTypes: [],
                             childProjects: []
                         }]
                     }, {
@@ -616,6 +684,7 @@ describe('projects', () => {
                             visible: false
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: []
                     }]
                 }
@@ -632,6 +701,9 @@ describe('projects', () => {
             expect(findProject(root, 'proj-1').vis.visible).to.equal(true);
             expect(findProject(root, '_Root').vis.visible).to.equal(true);
             expect(findProject(root, 'proj-2').vis.visible).to.equal(false);
+
+            const visibleRoot = state.visibleRootProject;
+            expect(visibleRoot.childProjects).to.have.length(1);
         });
 
         it('should show all children deep', async () => {
@@ -644,6 +716,7 @@ describe('projects', () => {
                         collapsed: false,
                         visible: false
                     },
+                    buildTypes: [],
                     childProjects: [{
                         id: 'proj-1',
                         vis: {
@@ -651,6 +724,7 @@ describe('projects', () => {
                             visible: false
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: [{
                             id: 'proj-1-a',
                             vis: {
@@ -658,6 +732,7 @@ describe('projects', () => {
                                 visible: false
                             },
                             parentProjectId: 'proj-1',
+                            buildTypes: [],
                             childProjects: []
                         }]
                     }, {
@@ -667,6 +742,7 @@ describe('projects', () => {
                             visible: false
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: []
                     }]
                 }
@@ -683,6 +759,71 @@ describe('projects', () => {
             expect(findProject(root, 'proj-1').vis.visible).to.equal(true);
             expect(findProject(root, 'proj-1-a').vis.visible).to.equal(true);
             expect(findProject(root, 'proj-2').vis.visible).to.equal(false);
+
+            const visRoot = state.visibleRootProject;
+            expect(visRoot.childProjects).to.have.length(1);
+            expect(findProject(visRoot, 'proj-1-a').vis.visible).to.equal(true);
+        });
+
+        it('should expand all parents up to root when filtering', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: true,
+                        visible: false
+                    },
+                    buildTypes: [],
+                    childProjects: [{
+                        id: 'proj-1',
+                        vis: {
+                            collapsed: true,
+                            visible: false
+                        },
+                        parentProjectId: '_Root',
+                        buildTypes: [],
+                        childProjects: [{
+                            id: 'proj-1-a',
+                            vis: {
+                                collapsed: true,
+                                visible: false
+                            },
+                            parentProjectId: 'proj-1',
+                            buildTypes: [],
+                            childProjects: []
+                        }]
+                    }, {
+                        id: 'proj-2',
+                        vis: {
+                            collapsed: true,
+                            visible: false
+                        },
+                        parentProjectId: '_Root',
+                        buildTypes: [],
+                        childProjects: []
+                    }]
+                },
+                filter: {
+                    projectIds: ['proj-1-a', 'proj-1', '_Root']
+                }
+            });
+
+            // target
+            await store.dispatch(projects.showProject('proj-1-a'));
+
+            // check
+            const state = store.getState();
+            const root = state.rootProject;
+
+            expect(findProject(root, 'proj-1-a').vis.collapsed).to.equal(false);
+            expect(findProject(root, 'proj-1').vis.collapsed).to.equal(false);
+            expect(findProject(root, '_Root').vis.collapsed).to.equal(false);
+            expect(findProject(root, 'proj-2').vis.collapsed).to.equal(true);
+
+            const visibleRoot = state.visibleRootProject;
+            expect(visibleRoot.childProjects).to.have.length(1);
         });
 
         it('should call rest api', async () => {
@@ -690,8 +831,10 @@ describe('projects', () => {
             const store = createStore({
                 rootProject: {
                     id: '_Root',
+                    buildTypes: [],
                     childProjects: [{
                         id: 'proj-1',
+                        buildTypes: [],
                         childProjects: [],
                         vis: {
                             collapsed: false,
@@ -730,6 +873,7 @@ describe('projects', () => {
                         collapsed: false,
                         visible: true
                     },
+                    buildTypes: [],
                     childProjects: [{
                         id: 'proj-1',
                         vis: {
@@ -737,6 +881,7 @@ describe('projects', () => {
                             visible: true
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: [{
                             id: 'proj-1-a',
                             vis: {
@@ -744,6 +889,7 @@ describe('projects', () => {
                                 visible: true
                             },
                             parentProjectId: 'proj-1',
+                            buildTypes: [],
                             childProjects: []
                         }]
                     }, {
@@ -753,6 +899,7 @@ describe('projects', () => {
                             visible: true
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: []
                     }]
                 }
@@ -769,6 +916,10 @@ describe('projects', () => {
             expect(findProject(root, 'proj-1').vis.visible).to.equal(false);
             expect(findProject(root, 'proj-1-a').vis.visible).to.equal(false);
             expect(findProject(root, 'proj-2').vis.visible).to.equal(true);
+
+            const visRoot = state.visibleRootProject;
+            expect(visRoot.childProjects).to.have.length(1);
+            expect(findProject(visRoot, 'proj-2').vis.visible).to.equal(true);
         });
 
         it('should call rest api', async () => {
@@ -776,8 +927,10 @@ describe('projects', () => {
             const store = createStore({
                 rootProject: {
                     id: '_Root',
+                    buildTypes: [],
                     childProjects: [{
                         id: 'proj-1',
+                        buildTypes: [],
                         childProjects: [],
                         vis: {
                             collapsed: false,
@@ -808,31 +961,37 @@ describe('projects', () => {
         it('should move project one position up', async () => {
 
             // setup
-            const store = createStore({
-                rootProject: {
-                    id: '_Root',
+            const rootProject = {
+                id: '_Root',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
                     vis: {
                         collapsed: false,
                         visible: true
                     },
-                    childProjects: [{
-                        id: 'proj-1',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }, {
-                        id: 'proj-2',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }]
-                }
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-2',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }]
+            };
+
+            const store = createStore({
+                rootProject,
+                visibleRootProject: rootProject
             });
 
             // target
@@ -840,7 +999,7 @@ describe('projects', () => {
 
             // check
             const state = store.getState();
-            const root = state.rootProject;
+            const root = state.visibleRootProject;
 
             expect(root.childProjects).to.have.length(2);
             expect(root.childProjects[0].id).to.equal('proj-2');
@@ -850,31 +1009,37 @@ describe('projects', () => {
         it('should skip if project is first', async () => {
 
             // setup
-            const store = createStore({
-                rootProject: {
-                    id: '_Root',
+            const rootProject = {
+                id: '_Root',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
                     vis: {
                         collapsed: false,
                         visible: true
                     },
-                    childProjects: [{
-                        id: 'proj-1',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }, {
-                        id: 'proj-2',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }]
-                }
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-2',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }]
+            };
+
+            const store = createStore({
+                rootProject,
+                visibleRootProject: rootProject
             });
 
             // target
@@ -882,14 +1047,15 @@ describe('projects', () => {
 
             // check
             const state = store.getState();
-            const root = state.rootProject;
+            const root = state.visibleRootProject;
 
             expect(root.childProjects).to.have.length(2);
             expect(root.childProjects[0].id).to.equal('proj-1');
             expect(root.childProjects[1].id).to.equal('proj-2');
         });
 
-        it('should call rest api', async () => {
+        it('should take hidden projects into account', async () => {
+
             // setup
             const store = createStore({
                 rootProject: {
@@ -898,6 +1064,7 @@ describe('projects', () => {
                         collapsed: false,
                         visible: true
                     },
+                    buildTypes: [],
                     childProjects: [{
                         id: 'proj-1',
                         vis: {
@@ -905,17 +1072,108 @@ describe('projects', () => {
                             visible: true
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: []
                     }, {
                         id: 'proj-2',
                         vis: {
                             collapsed: false,
+                            visible: false
+                        },
+                        parentProjectId: '_Root',
+                        buildTypes: [],
+                        childProjects: []
+                    }, {
+                        id: 'proj-3',
+                        vis: {
+                            collapsed: false,
                             visible: true
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
+                        childProjects: []
+                    }]
+                },
+                visibleRootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    buildTypes: [],
+                    childProjects: [{
+                        id: 'proj-1',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        buildTypes: [],
+                        childProjects: []
+                    }, {
+                        id: 'proj-3',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: []
                     }]
                 }
+            });
+
+            // target
+            await store.dispatch(projects.moveProjectUp('proj-3'));
+
+            // check
+            const state = store.getState();
+            const root = state.rootProject;
+
+            expect(root.childProjects).to.have.length(3);
+            expect(root.childProjects[0].id).to.equal('proj-3');
+            expect(root.childProjects[1].id).to.equal('proj-1');
+            expect(root.childProjects[2].id).to.equal('proj-2');
+
+            const visibleRoot = state.visibleRootProject;
+            expect(visibleRoot.childProjects).to.have.length(2);
+            expect(visibleRoot.childProjects[0].id).to.equal('proj-3');
+            expect(visibleRoot.childProjects[1].id).to.equal('proj-1');
+        });
+
+        it('should call rest api', async () => {
+            // setup
+            const rootProject = {
+                id: '_Root',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-2',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }]
+            };
+
+            const store = createStore({
+                rootProject,
+                visibleRootProject: rootProject
             });
 
             // target
@@ -940,6 +1198,102 @@ describe('projects', () => {
         it('should move project one position down', async () => {
 
             // setup
+            const rootProject = {
+                id: '_Root',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-2',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }]
+            };
+
+            const store = createStore({
+                rootProject,
+                visibleRootProject: rootProject
+            });
+
+            // target
+            await store.dispatch(projects.moveProjectDown('proj-1'));
+
+            // check
+            const state = store.getState();
+            const root = state.visibleRootProject;
+
+            expect(root.childProjects).to.have.length(2);
+            expect(root.childProjects[0].id).to.equal('proj-2');
+            expect(root.childProjects[1].id).to.equal('proj-1');
+        });
+
+        it('should skip if project is last', async () => {
+
+            // setup
+            const rootProject = {
+                id: '_Root',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-2',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }]
+            };
+
+            const store = createStore({
+                rootProject,
+                visibleRootProject: rootProject
+            });
+
+            // target
+            await store.dispatch(projects.moveProjectDown('proj-2'));
+
+            // check
+            const state = store.getState();
+            const root = state.visibleRootProject;
+
+            expect(root.childProjects).to.have.length(2);
+            expect(root.childProjects[0].id).to.equal('proj-1');
+            expect(root.childProjects[1].id).to.equal('proj-2');
+        });
+
+        it('should take hidden projects into account', async () => {
+
+            // setup
             const store = createStore({
                 rootProject: {
                     id: '_Root',
@@ -947,6 +1301,7 @@ describe('projects', () => {
                         collapsed: false,
                         visible: true
                     },
+                    buildTypes: [],
                     childProjects: [{
                         id: 'proj-1',
                         vis: {
@@ -954,14 +1309,52 @@ describe('projects', () => {
                             visible: true
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: []
                     }, {
                         id: 'proj-2',
                         vis: {
                             collapsed: false,
+                            visible: false
+                        },
+                        parentProjectId: '_Root',
+                        buildTypes: [],
+                        childProjects: []
+                    }, {
+                        id: 'proj-3',
+                        vis: {
+                            collapsed: false,
                             visible: true
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
+                        childProjects: []
+                    }]
+                },
+                visibleRootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    buildTypes: [],
+                    childProjects: [{
+                        id: 'proj-1',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        buildTypes: [],
+                        childProjects: []
+                    }, {
+                        id: 'proj-3',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: []
                     }]
                 }
@@ -974,80 +1367,50 @@ describe('projects', () => {
             const state = store.getState();
             const root = state.rootProject;
 
-            expect(root.childProjects).to.have.length(2);
+            expect(root.childProjects).to.have.length(3);
             expect(root.childProjects[0].id).to.equal('proj-2');
-            expect(root.childProjects[1].id).to.equal('proj-1');
-        });
+            expect(root.childProjects[1].id).to.equal('proj-3');
+            expect(root.childProjects[2].id).to.equal('proj-1');
 
-        it('should skip if project is last', async () => {
-
-            // setup
-            const store = createStore({
-                rootProject: {
-                    id: '_Root',
-                    vis: {
-                        collapsed: false,
-                        visible: true
-                    },
-                    childProjects: [{
-                        id: 'proj-1',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }, {
-                        id: 'proj-2',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }]
-                }
-            });
-
-            // target
-            await store.dispatch(projects.moveProjectDown('proj-2'));
-
-            // check
-            const state = store.getState();
-            const root = state.rootProject;
-
-            expect(root.childProjects).to.have.length(2);
-            expect(root.childProjects[0].id).to.equal('proj-1');
-            expect(root.childProjects[1].id).to.equal('proj-2');
+            const visibleRoot = state.visibleRootProject;
+            expect(visibleRoot.childProjects).to.have.length(2);
+            expect(visibleRoot.childProjects[0].id).to.equal('proj-3');
+            expect(visibleRoot.childProjects[1].id).to.equal('proj-1');
         });
 
         it('should call rest api', async () => {
             // setup
-            const store = createStore({
-                rootProject: {
-                    id: '_Root',
+            const rootProject = {
+                id: '_Root',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
                     vis: {
                         collapsed: false,
                         visible: true
                     },
-                    childProjects: [{
-                        id: 'proj-1',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }, {
-                        id: 'proj-2',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }]
-                }
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-2',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }]
+            };
+
+            const store = createStore({
+                rootProject,
+                visibleRootProject: rootProject
             });
 
             // target
@@ -1072,39 +1435,46 @@ describe('projects', () => {
         it('should move project to new position', async () => {
 
             // setup
-            const store = createStore({
-                rootProject: {
-                    id: '_Root',
+            const rootProject = {
+                id: '_Root',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
                     vis: {
                         collapsed: false,
                         visible: true
                     },
-                    childProjects: [{
-                        id: 'proj-1',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }, {
-                        id: 'proj-2',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }, {
-                        id: 'proj-3',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }]
-                }
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-2',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-3',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }]
+            };
+
+            const store = createStore({
+                rootProject,
+                visibleRootProject: rootProject
             });
 
             // target
@@ -1112,7 +1482,7 @@ describe('projects', () => {
 
             // check
             const state = store.getState();
-            const root = state.rootProject;
+            const root = state.visibleRootProject;
 
             expect(root.childProjects).to.have.length(3);
             expect(root.childProjects[0].id).to.equal('proj-2');
@@ -1123,39 +1493,46 @@ describe('projects', () => {
         it('should not move project outside right border', async () => {
 
             // setup
-            const store = createStore({
-                rootProject: {
-                    id: '_Root',
+            const rootProject = {
+                id: '_Root',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
                     vis: {
                         collapsed: false,
                         visible: true
                     },
-                    childProjects: [{
-                        id: 'proj-1',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }, {
-                        id: 'proj-2',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }, {
-                        id: 'proj-3',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }]
-                }
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-2',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-3',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }]
+            };
+
+            const store = createStore({
+                rootProject,
+                visibleRootProject: rootProject
             });
 
             // target
@@ -1163,7 +1540,7 @@ describe('projects', () => {
 
             // check
             const state = store.getState();
-            const root = state.rootProject;
+            const root = state.visibleRootProject;
 
             expect(root.childProjects).to.have.length(3);
             expect(root.childProjects[0].id).to.equal('proj-2');
@@ -1174,39 +1551,46 @@ describe('projects', () => {
         it('should not move project outside left border', async () => {
 
             // setup
-            const store = createStore({
-                rootProject: {
-                    id: '_Root',
+            const rootProject = {
+                id: '_Root',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
                     vis: {
                         collapsed: false,
                         visible: true
                     },
-                    childProjects: [{
-                        id: 'proj-1',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }, {
-                        id: 'proj-2',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }, {
-                        id: 'proj-3',
-                        vis: {
-                            collapsed: false,
-                            visible: true
-                        },
-                        parentProjectId: '_Root',
-                        childProjects: []
-                    }]
-                }
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-2',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-3',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }]
+            };
+
+            const store = createStore({
+                rootProject,
+                visibleRootProject: rootProject
             });
 
             // target
@@ -1214,7 +1598,7 @@ describe('projects', () => {
 
             // check
             const state = store.getState();
-            const root = state.rootProject;
+            const root = state.visibleRootProject;
 
             expect(root.childProjects).to.have.length(3);
             expect(root.childProjects[0].id).to.equal('proj-3');
@@ -1222,16 +1606,18 @@ describe('projects', () => {
             expect(root.childProjects[2].id).to.equal('proj-2');
         });
 
-        it('should call rest api', async () => {
-            
+        it('should take hidden projects into account', async () => {
+
             // setup
             const store = createStore({
+
                 rootProject: {
                     id: '_Root',
                     vis: {
                         collapsed: false,
                         visible: true
                     },
+                    buildTypes: [],
                     childProjects: [{
                         id: 'proj-1',
                         vis: {
@@ -1239,14 +1625,16 @@ describe('projects', () => {
                             visible: true
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: []
                     }, {
                         id: 'proj-2',
                         vis: {
                             collapsed: false,
-                            visible: true
+                            visible: false
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: []
                     }, {
                         id: 'proj-3',
@@ -1255,9 +1643,101 @@ describe('projects', () => {
                             visible: true
                         },
                         parentProjectId: '_Root',
+                        buildTypes: [],
+                        childProjects: []
+                    }]
+                },
+
+                visibleRootProject: {
+                    id: '_Root',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    buildTypes: [],
+                    childProjects: [{
+                        id: 'proj-1',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        buildTypes: [],
+                        childProjects: []
+                    }, {
+                        id: 'proj-3',
+                        vis: {
+                            collapsed: false,
+                            visible: true
+                        },
+                        parentProjectId: '_Root',
+                        buildTypes: [],
                         childProjects: []
                     }]
                 }
+            });
+
+            // target
+            await store.dispatch(projects.moveProject('_Root', 0, 1));
+
+            // check
+            const state = store.getState();
+            const root = state.rootProject;
+            const visRoot = state.visibleRootProject;
+
+            expect(root.childProjects).to.have.length(3);
+            expect(root.childProjects[0].id).to.equal('proj-2');
+            expect(root.childProjects[1].id).to.equal('proj-3');
+            expect(root.childProjects[2].id).to.equal('proj-1');
+
+            expect(visRoot.childProjects).to.have.length(2);
+            expect(visRoot.childProjects[0].id).to.equal('proj-3');
+            expect(visRoot.childProjects[1].id).to.equal('proj-1');
+        });
+
+        it('should call rest api', async () => {
+            
+            // setup
+            const rootProject = {
+                id: '_Root',
+                vis: {
+                    collapsed: false,
+                    visible: true
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-2',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }, {
+                    id: 'proj-3',
+                    vis: {
+                        collapsed: false,
+                        visible: true
+                    },
+                    parentProjectId: '_Root',
+                    buildTypes: [],
+                    childProjects: []
+                }]
+            };
+
+            const store = createStore({
+                rootProject,
+                visibleRootProject: rootProject
             });
 
             // target
@@ -1273,6 +1753,367 @@ describe('projects', () => {
                 oldIdx: 0,
                 newIdx: 2
             }));
+        });
+
+    });
+
+    describe('search', () => {
+
+        it('should filter tree by localy found entities', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    name: '<Root>',
+                    vis: {
+                        visible: true,
+                        collapsed: false
+                    },
+                    buildTypes: [],
+                    childProjects: [{
+                        id: 'proj-1',
+                        name: 'proj-1 #FINDME#',
+                        vis: {
+                            visible: true,
+                            collapsed: false
+                        },
+                        parentProjectId: '_Root',
+                        childProjects: null,
+                        buildTypes: null
+                    }]
+                },
+                filter: {
+                    projectIds: [],
+                    buildTypeIds: []
+                }
+            });
+
+            // mock search call
+            fetchMock = mockFetch.mock({json: () => ({
+                tree: null, projectIds: [], buildTypeIds: []
+            })});
+
+            // target
+            // not awaiting to catch filter state before rest api call
+            store.dispatch(projects.search('#FINDME#'));
+
+            // check
+            const state = store.getState();
+
+            expect(state.filter.projectIds).to.include(
+                '_Root',
+                'proj-1'
+            );
+        });
+
+        it('should call rest api to search tree', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    name: '<Root>',
+                    vis: {
+                        collapsed: false
+                    },
+                    buildTypes: null,
+                    childProjects: null
+                },
+                filter: {
+                    projectIds: []
+                }
+            });
+
+            // mock search call
+            fetchMock = mockFetch.mock({json: () => ({
+                tree: null, projectIds: [], buildTypeIds: []
+            })});
+
+            // target
+            await store.dispatch(projects.search('#FINDME#'));
+
+            // check
+            expect(fetchMock.calledOnce).to.equal(true);
+            const params = fetchMock.firstCall.args;
+            expect(params[0]).to.match(
+                /api\/projects\/search\?s=%23FINDME%23&session=.+/);
+            expect(params[1].method).to.equal('GET');
+        });
+
+        it('should extend tree by search result tree', async () => {
+            
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    name: '<Root>',
+                    vis: {
+                        visible: true,
+                        collapsed: false
+                    },
+                    buildTypes: null,
+                    childProjects: null
+                },
+                filter: {
+                    projectIds: []
+                }
+            });
+
+            // mock search call
+            fetchMock = mockFetch.mock({json: () => ({
+                tree: {
+                    id: '_Root',
+                    name: '<Root>',
+                    vis: {
+                        visible: true,
+                        collapsed: false
+                    },
+                    buildTypes: [],
+                    childProjects: [{
+                        id: 'proj-1',
+                        name: 'proj-1 #FINDME#',
+                        vis: {
+                            visible: true,
+                            collapsed: false
+                        },
+                        parentProjectId: '_Root',
+                        childProjects: [],
+                        buildTypes: []
+                    }]
+                },
+                projectIds: ['_Root', 'proj-1'],
+                buildTypeIds: []
+            })});
+
+            // target
+            await store.dispatch(projects.search('#FINDME#'));
+
+            // check
+            const state = store.getState();
+            const root = state.visibleRootProject;
+
+            expect(root).to.deep.equal({
+                id: '_Root',
+                name: '<Root>',
+                vis: {
+                    visible: true,
+                    collapsed: false
+                },
+                buildTypes: [],
+                childProjects: [{
+                    id: 'proj-1',
+                    name: 'proj-1 #FINDME#',
+                    vis: {
+                        visible: true,
+                        collapsed: false
+                    },
+                    parentProjectId: '_Root',
+                    childProjects: [],
+                    buildTypes: []
+                }]
+            });
+        });
+
+        it('should filter tree by search result entities', async () => {
+
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    name: '<Root>',
+                    vis: {
+                        visible: true,
+                        collapsed: false
+                    },
+                    buildTypes: null,
+                    childProjects: null
+                },
+                filter: {
+                    projectIds: [],
+                    buildTypeIds: []
+                }
+            });
+
+            // mock search call
+            fetchMock = mockFetch.mock({json: () => ({
+                tree: {
+                    id: '_Root',
+                    name: '<Root>',
+                    vis: {
+                        collapsed: false
+                    },
+                    buildTypes: [],
+                    childProjects: [{
+                        id: 'proj-1',
+                        name: 'proj-1 #FINDME#',
+                        vis: {
+                            visible: true,
+                            collapsed: false
+                        },
+                        parentProjectId: '_Root',
+                        childProjects: [],
+                        buildTypes: [{
+                            id: 'build-1',
+                            name: 'build-1 #FINDME#'
+                        }]
+                    }]
+                },
+                projectIds: ['_Root', 'proj-1'],
+                buildTypeIds: ['build-1']
+            })});
+
+            // target
+            await store.dispatch(projects.search('#FINDME#'));
+
+            // check
+            const state = store.getState();
+
+            expect(state.filter.projectIds).to.include(
+                '_Root',
+                'proj-1'
+            );
+            expect(state.filter.buildTypeIds).to.include(
+                'build-1'
+            );
+        });
+
+        it('should enable "searching" flag while searching', async () => {
+            
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    name: '<Root>',
+                    vis: {
+                        visible: true,
+                        collapsed: false
+                    },
+                    buildTypes: [],
+                    childProjects: []
+                },
+                filter: {
+                    projectIds: [],
+                    buildTypeIds: []
+                }
+            });
+
+            // mock search call
+            fetchMock = mockFetch.mock({json: () => ({
+                tree: null, projectIds: [], buildTypeIds: []
+            })});
+
+            // target
+            // not awaiting to catch filter state before rest api call
+            store.dispatch(projects.search('#FINDME#'));
+
+            // check
+            const state = store.getState();
+
+            expect(state.search.running).to.equal(true);
+        });
+
+        it('should disable "searching" flag after search ends', async () => {
+            
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    name: '<Root>',
+                    vis: {
+                        visible: true,
+                        collapsed: false
+                    },
+                    buildTypes: [],
+                    childProjects: []
+                },
+                filter: {
+                    projectIds: [],
+                    buildTypeIds: []
+                }
+            });
+
+            // mock search call
+            fetchMock = mockFetch.mock({json: () => ({
+                tree: null, projectIds: [], buildTypeIds: []
+            })});
+
+            // target
+            await store.dispatch(projects.search('#FINDME#'));
+
+            // check
+            const state = store.getState();
+
+            expect(state.search.running).to.equal(false);
+        });
+
+        it('should set search string while searching', async () => {
+            
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    name: '<Root>',
+                    vis: {
+                        visible: true,
+                        collapsed: false
+                    },
+                    buildTypes: [],
+                    childProjects: []
+                },
+                filter: {
+                    projectIds: [],
+                    buildTypeIds: []
+                }
+            });
+
+            // mock search call
+            fetchMock = mockFetch.mock({json: () => ({
+                tree: null, projectIds: [], buildTypeIds: []
+            })});
+
+            // target
+            // not awaiting to catch filter state before rest api call
+            store.dispatch(projects.search('#FINDME#'));
+
+            // check
+            const state = store.getState();
+
+            expect(state.search.str).to.equal('#FINDME#');
+        });
+
+        it('should remove search string if it is empty', async () => {
+            
+            // setup
+            const store = createStore({
+                rootProject: {
+                    id: '_Root',
+                    name: '<Root>',
+                    vis: {
+                        visible: true,
+                        collapsed: false
+                    },
+                    buildTypes: [],
+                    childProjects: []
+                },
+                filter: {
+                    projectIds: [],
+                    buildTypeIds: []
+                }
+            });
+
+            // mock search call
+            fetchMock = mockFetch.mock({json: () => ({
+                tree: null, projectIds: [], buildTypeIds: []
+            })});
+
+            // target
+            await store.dispatch(projects.search(''));
+
+            // check
+            const state = store.getState();
+
+            expect(state.search.str).to.equal(null);
         });
 
     });

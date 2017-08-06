@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
 
+import Marker from '../Marker';
+
 import classes from './ProjectHeader.css';
 
 export default class ProjectHeader extends Component {
@@ -12,6 +14,7 @@ export default class ProjectHeader extends Component {
 
         isConfiguring: PropTypes.bool.isRequired,
         collapsed: PropTypes.bool.isRequired,
+        searchStr: PropTypes.string,
 
         DragHandle: PropTypes.func,
 
@@ -27,7 +30,7 @@ export default class ProjectHeader extends Component {
 
     render() {
         const {isConfiguring, collapsed, onExpand, onCollapse} = this.props;
-        const {name, visible, onShow, onHide} = this.props;
+        const {name, visible, searchStr, onShow, onHide} = this.props;
         const {onMoveUp, onMoveDown, DragHandle} = this.props;
 
         // TODO: show drag-handle in modern browsers,
@@ -41,9 +44,8 @@ export default class ProjectHeader extends Component {
                     {collapsed ? 'expand' : 'collapse'}
                 </span>
 
-                <span className={classes.name}>
-                    {name}
-                </span>
+                <Marker className={classes.name}
+                    str={name} markStr={searchStr} />
 
                 {isConfiguring &&
                     <span className={classes.config}>

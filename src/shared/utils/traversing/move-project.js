@@ -12,7 +12,7 @@ export default function moveProject(
     parentProjectId,
     oldIdx,
     newIdx) {
-    
+
     const parent = findProject(rootProject, parentProjectId);
     const children = parent.childProjects;
     const project = children[oldIdx];

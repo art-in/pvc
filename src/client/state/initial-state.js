@@ -1,8 +1,31 @@
 export default {
     
-    // Projects tree root
+    // root of raw projects tree (before applying visibility rules)
     rootProject: undefined,
 
-    // Indicates whether project list is in visibility configuration mode
-    isConfiguringVisibility: false
+    // root of visible projects tree (after applying visibility rules)
+    // rendering source. hidden entities are removed
+    visibleRootProject: undefined,
+
+    // project list filter
+    filter: {
+        // IDs of visible entities
+        // (null means - no filter applied,
+        // empty array - no visible entities)
+        projectIds: null,
+        buildTypeIds: null
+    },
+
+    // indicates whether projects tree is in 
+    // visibility configuration mode
+    isConfiguringVisibility: false,
+
+    search: {
+        // indicates whether search by entity name
+        // is running on projects tree
+        running: false,
+
+        // search string
+        str: null
+    }
 };

@@ -11,7 +11,10 @@ export default function showProject(rootProject, projectId) {
     const project = findProject(rootProject, projectId);
 
     bubble(rootProject, projectId,
-        p => p.vis.visible = true);
+        p => {
+            p.vis.visible = true;
+            p.vis.collapsed = false;
+        });
     forEachProject(project,
         p => p.vis.visible = true);
 }

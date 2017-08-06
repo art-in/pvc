@@ -13,6 +13,7 @@ export default function findProject(project, projectId, isRoot = true) {
     }
 
     if (project.childProjects === null) {
+        // some projects were not loaded yet
         return;
     }
 

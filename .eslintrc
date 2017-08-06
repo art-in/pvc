@@ -16,6 +16,7 @@
     "globals": {
         "Promise": false,
         "Symbol": false,
+        "Set": false,
         "Map": false,
         "WeakMap": false
     },

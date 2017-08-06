@@ -5,8 +5,9 @@ import * as projects from '../../state/projects/actions';
 
 export default connect(
     state => ({
-        rootProject: state.rootProject,
-        isConfiguring: state.isConfiguringVisibility
+        rootProject: state.visibleRootProject,
+        isConfiguring: state.isConfiguringVisibility,
+        isSearching: state.search.running
     }),
     dispatch => ({
         onStartConfiguration: () =>
@@ -16,6 +17,8 @@ export default connect(
         onCollapseAll: () =>
             dispatch(projects.collapseAll()),
         onExpandAll: () =>
-            dispatch(projects.expandAll())
+            dispatch(projects.expandAll()),
+        onSearch: searchStr =>
+            dispatch(projects.search(searchStr))
     })
 )(Component);

@@ -30,6 +30,8 @@ export default class Project extends Component {
         }).isRequired,
         
         isConfiguring: PropTypes.bool.isRequired,
+        isFiltering: PropTypes.bool.isRequired,
+        searchStr: PropTypes.string,
 
         onExpand: PropTypes.func.isRequired,
         onCollapse: PropTypes.func.isRequired,
@@ -52,10 +54,13 @@ export default class Project extends Component {
         const nextChildProjects = nextProject.childProjects || [];
 
         return this.props.isConfiguring !== nextProps.isConfiguring ||
+            this.props.isFiltering !== nextProps.isFiltering ||
+            this.props.searchStr !== nextProps.searchStr ||
             project.id !== nextProject.id ||
             project.vis.collapsed !== nextProject.vis.collapsed ||
             project.vis.visible !== nextProject.vis.visible ||
             project.childrenLoading !== nextProject.childrenLoading ||
+            childProjects.length !== nextChildProjects.length ||
             childProjects.some((p, idx) => p.id !==
                 (nextChildProjects[idx] !== undefined &&
                  nextChildProjects[idx].id));
@@ -66,23 +71,16 @@ export default class Project extends Component {
         const {childrenLoading} = this.props.project;
         const {collapsed, visible} = this.props.project.vis;
         const {isConfiguring, onExpand, onCollapse} = this.props;
-        const {onShow, onHide} = this.props;
+        const {onShow, onHide, isFiltering, searchStr} = this.props;
         const {onMoveUp, onMoveDown, onMove, DragHandle} = this.props;
         
-        if (!isConfiguring && !visible) {
-            // project configured to be hidden
-            return null;
-        }
-
         const buildTypesLoaded = Boolean(buildTypes && buildTypes.length);
-        
-        // do not show builds when configuring projects visibility
-        const buildTypesShowable = Boolean(!isConfiguring && buildTypesLoaded);
-        const childProjectsShowable = Boolean(
+        const childProjectsLoaded = Boolean(
             childProjects && childProjects.length);
         
-        const childrenShowable = buildTypesShowable || childProjectsShowable;
-        const showChild = !collapsed && (childrenLoading || childrenShowable);
+        const childrenLoaded = buildTypesLoaded || childProjectsLoaded;
+        const showChild = (!collapsed || isFiltering) &&
+            (childrenLoading || childrenLoaded);
 
         return (
             <div className={cx(classes.root, {[classes.hidden]: !visible})}>
@@ -92,6 +90,7 @@ export default class Project extends Component {
                     visible={visible}
                     isConfiguring={isConfiguring}
                     collapsed={collapsed}
+                    searchStr={searchStr}
                     DragHandle={DragHandle}
                     onExpand={onExpand.bind(null, id)}
                     onCollapse={onCollapse.bind(null, id)}
@@ -103,25 +102,28 @@ export default class Project extends Component {
                 {showChild &&
                     <div className={classes.child}>
                         
-                        {buildTypesShowable &&
+                        {buildTypesLoaded &&
                             <div className={classes['build-types']}>
                                 {buildTypes.map(b =>
-                                    <BuildType key={b.id} build={b} />)}
+                                    <BuildType key={b.id} build={b}
+                                        searchStr={searchStr} />)}
                             </div>}
 
-                        {childProjectsShowable &&
+                        {childProjectsLoaded &&
                             <ProjectChildren
+                                className={classes['child-projects']}
                                 sortable={isConfiguring}
                                 helperClass={classes['drag-ghost']}
                                 lockToContainerEdges={true}
                                 lockAxis={'y'}
                                 useDragHandle={true}
                                 onSortEnd={onMove.bind(null, id)}
-                                className={classes['child-projects']}
                                 projectIds={childProjects.map(p => p.id)} />}
 
                         {childrenLoading &&
-                            <Waiter className={classes['child-projects']} />}
+                            <Waiter className={cx(
+                                classes['child-projects'],
+                                classes.waiter)} />}
                     </div>
                 }
             </div>

@@ -103,7 +103,8 @@ function validateProjectsResponse(projects) {
                 buildTypes: types.arrayOf(types.shape({
                     id: types.string.isRequired,
                     name: types.string.isRequired
-                }))
+                })),
+                childProjects: types.arrayOf(types.object)
             }))
         }).isRequired
     };
