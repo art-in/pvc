@@ -16,6 +16,7 @@ export default class ProjectHeader extends Component {
         collapsed: PropTypes.bool.isRequired,
         searchStr: PropTypes.string,
 
+        useDragAndDrop: PropTypes.bool.isRequired,
         DragHandle: PropTypes.func,
 
         onExpand: PropTypes.func.isRequired,
@@ -31,10 +32,10 @@ export default class ProjectHeader extends Component {
     render() {
         const {isConfiguring, collapsed, onExpand, onCollapse} = this.props;
         const {name, visible, searchStr, onShow, onHide} = this.props;
-        const {onMoveUp, onMoveDown, DragHandle} = this.props;
+        const {onMoveUp, onMoveDown, DragHandle, useDragAndDrop} = this.props;
 
-        // TODO: show drag-handle in modern browsers,
-        //       up/down buttons - in old ones (#1)
+        const dnd = useDragAndDrop && DragHandle;
+
         return (
             <div className={classes.header}>
                 <span className={cx({
@@ -50,16 +51,19 @@ export default class ProjectHeader extends Component {
                 {isConfiguring &&
                     <span className={classes.config}>
 
-                        {DragHandle && <DragHandle />}
+                        {dnd && <DragHandle />}
 
-                        <span className={classes.up}
-                            onClick={onMoveUp}>
-                            {'up'}
-                        </span>
-                        <span className={classes.down}
-                            onClick={onMoveDown}>
-                            {'down'}
-                        </span>
+                        {!dnd &&
+                            <span className={classes.up}
+                                onClick={onMoveUp}>
+                                {'up'}
+                            </span>}
+
+                        {!dnd &&
+                            <span className={classes.down}
+                                onClick={onMoveDown}>
+                                {'down'}
+                            </span>}
 
                         <span className={cx({
                             [classes.hide]: visible,

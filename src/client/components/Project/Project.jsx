@@ -43,6 +43,7 @@ export default class Project extends Component {
         onMoveDown: PropTypes.func.isRequired,
 
         onMove: PropTypes.func.isRequired,
+        useDragAndDrop: PropTypes.bool.isRequired,
         DragHandle: PropTypes.func
     }
 
@@ -72,7 +73,8 @@ export default class Project extends Component {
         const {collapsed, visible} = this.props.project.vis;
         const {isConfiguring, onExpand, onCollapse} = this.props;
         const {onShow, onHide, isFiltering, searchStr} = this.props;
-        const {onMoveUp, onMoveDown, onMove, DragHandle} = this.props;
+        const {onMoveUp, onMoveDown, onMove} = this.props;
+        const {DragHandle, useDragAndDrop} = this.props;
         
         const buildTypesLoaded = Boolean(buildTypes && buildTypes.length);
         const childProjectsLoaded = Boolean(
@@ -81,7 +83,7 @@ export default class Project extends Component {
         const childrenLoaded = buildTypesLoaded || childProjectsLoaded;
         const showChild = (!collapsed || isFiltering) &&
             (childrenLoading || childrenLoaded);
-
+            
         return (
             <div className={cx(classes.root, {[classes.hidden]: !visible})}>
 
@@ -92,6 +94,7 @@ export default class Project extends Component {
                     collapsed={collapsed}
                     searchStr={searchStr}
                     DragHandle={DragHandle}
+                    useDragAndDrop={useDragAndDrop}
                     onExpand={onExpand.bind(null, id)}
                     onCollapse={onCollapse.bind(null, id)}
                     onShow={onShow.bind(null, id)}

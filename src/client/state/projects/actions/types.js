@@ -2,6 +2,8 @@ export default {
     SET_PROJECTS_TREE: 'set projects tree',
     EXTEND_PROJECTS_TREE: 'extend projects tree',
 
+    DISABLE_DND: 'disable drag-drop',
+
     PROJECT_CHILDREN_LOADING: 'project children loading',
     PROJECT_CHILDREN_LOADED: 'project children loaded',
 
@@ -15,7 +17,7 @@ export default {
     MOVE_PROJECT: 'move project',
 
     SET_PROJECTS_FILTER: 'set projects filter',
-
+    
     START_SEARCH: 'start search',
     END_SEARCH: 'end search',
     SET_SEARCH_STRING: 'set search string'

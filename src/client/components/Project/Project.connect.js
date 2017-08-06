@@ -31,6 +31,7 @@ export default connect(
 
         searchStr: state.search.str,
 
+        useDragAndDrop: state.useDragAndDrop,
         DragHandle: ownProps.DragHandle
     }),
     dispatch => ({

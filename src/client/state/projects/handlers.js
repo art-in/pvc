@@ -15,8 +15,13 @@ export default (oldState, action) => {
     const state = clone(oldState);
 
     switch (action.type) {
+
     case types.SET_PROJECTS_TREE:
         state.rootProject = action.rootProject;
+        break;
+
+    case types.DISABLE_DND:
+        state.useDragAndDrop = false;
         break;
 
     case types.COLLAPSE_PROJECT:

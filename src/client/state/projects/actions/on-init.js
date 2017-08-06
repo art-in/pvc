@@ -1,5 +1,6 @@
 import types from './types';
 import api from '../../api';
+import supportsDragAndDrop from 'client/utils/check-support-dnd';
 
 /**
  * Handles on app init event
@@ -14,4 +15,8 @@ export default () => async dispatch => {
         type: types.SET_PROJECTS_TREE,
         rootProject
     });
+
+    if (!supportsDragAndDrop()) {
+        dispatch({type: types.DISABLE_DND});
+    }
 };

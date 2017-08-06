@@ -27,5 +27,11 @@ export default {
 
         // search string
         str: null
-    }
+    },
+
+    // indicates whether projects can be sorted 
+    // with drag-drop handles while in visibility 
+    // configuration mode, otherwise - up/down buttons
+    // old browsers cannot use drag-drop
+    useDragAndDrop: true
 };
