@@ -1,6 +1,6 @@
 {
   "name": "pvc",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "description": "projects visibility configurator",
   "main": "index.js",
   "scripts": {
