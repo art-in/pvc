@@ -34,14 +34,11 @@ export default class ProjectList extends Component {
         return (
             <div className={classes.root}>
                 <div className={classes['header']}>
-                    <span className={classes['colexp-btn']}
+                    <span className={classes['collapse-all']}
                         onClick={onCollapseAll}>
-                        collapse all
                     </span>
-                    &nbsp; / &nbsp;
-                    <span className={classes['colexp-btn']}
+                    <span className={classes['expand-all']}
                         onClick={onExpandAll}>
-                        expand all
                     </span>
 
                     <SearchBox onChange={onSearch} isSearching={isSearching} />
@@ -64,7 +61,7 @@ export default class ProjectList extends Component {
                 {rootLoaded && !hasProjects &&
                     <span className={classes['no-projects']}>
                         There are no projects to show.
-                        Please configure visible projects.
+                        Please clean search box or configure visible projects.
                     </span>}
 
                 {!rootLoaded && <Waiter />}

@@ -1,18 +1,73 @@
-.header {
-    background-color: #F3F5F7;
+.root {
     padding: 5px;
+    font-size: 130%;
 }
 
-.header > span + span {
+.root.configuring {
+    /* fix: ff selects text while drag-drop items */
+    user-select: none;
+}
+
+.root > span + span {
     margin-left: 10px;
+}
+
+.icon {
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 70% 70%;
+    background-image: url(./images/project.png);
 }
 
 .name {}
 
 .collapse,
-.expand {
+.expand,
+.show,
+.hide,
+.up,
+.down {
     cursor: pointer;
-    text-decoration: underline;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 100% 100%;
+}
+
+.collapse {
+    background-image: url(./images/collapse.png);
+
+}
+
+.expand {
+    background-image: url(./images/expand.png);
+}
+
+.show {
+    background-image: url(./images/show.png);
+}
+
+.show:hover {
+    background-image: url(./images/show-hover.png);
+}
+
+.hide {
+    background-image: url(./images/hide.png);
+}
+
+.up {
+    background-image: url(./images/up.png);
+}
+
+.down {
+    background-image: url(./images/down.png);
 }
 
 .config {
@@ -21,12 +76,4 @@
 
 .config span + span {
     margin-left: 20px;
-}
-
-.show,
-.hide,
-.up,
-.down {
-    text-decoration: underline;
-    cursor: pointer;
 }

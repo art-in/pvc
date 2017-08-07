@@ -1,1 +1,19 @@
-.root {}
+.root {
+    font-size: 130%;
+    padding: 5px 0;
+}
+
+.icon {
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 70% 70%;
+    background-image: url(./images/build.png);
+}
+
+.name {
+    margin-left: 10px;
+}

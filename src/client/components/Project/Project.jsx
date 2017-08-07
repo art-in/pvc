@@ -97,6 +97,7 @@ export default class Project extends Component {
                 {[classes.hidden]: isConfiguring && !visible})}>
 
                 <ProjectHeader
+                    className={classes.header}
                     name={name}
                     visible={visible}
                     collapsable={collapsable}
@@ -120,6 +121,7 @@ export default class Project extends Component {
                             <div className={classes['build-types']}>
                                 {buildTypes.map(b =>
                                     <BuildType key={b.id} build={b}
+                                        className={classes['build-type']}
                                         searchStr={searchStr} />)}
                             </div>}
 

@@ -3,10 +3,44 @@
     border-bottom: 1px solid #e0e0e0;
 }
 
+.root::before {
+    content: '';
+    height: 90px;
+    position: absolute;
+    z-index: -1;
+    top: 0;
+    left: 0;
+    min-width: 100%;
+    background: linear-gradient(
+        to bottom,
+        #f6f6f6 0%,
+        #f6f6f6 40%,
+        #ffffff 100%,
+        #ffffff 100%);
+}
+
 .container {
+    box-sizing: border-box;
     max-width: 1600px;
+    min-width: 960px;
+    padding: 0 20px;
     margin: 0 auto;
     text-align: center;
     line-height: 58px;
     vertical-align: middle;
+}
+
+.logo {
+    float: left;
+    display: block;
+    margin-top: 7px;
+    width: 40px;
+    height: 40px;
+    background: url(./images/logo.svg) no-repeat 50% 50%;
+    background-size: 100% 100%;
+}
+
+.projects {
+    float: left;
+    padding-left: 20px;
 }

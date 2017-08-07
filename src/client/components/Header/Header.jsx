@@ -8,7 +8,10 @@ export default class Header extends Component {
         return (
             <header className={classes.root}>
                 <div className={classes.container}>
-                    pvc
+                    <span className={classes.logo} />
+                    <span className={classes.projects}>
+                        Projects
+                    </span>
                 </div>
             </header>
         );

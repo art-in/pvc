@@ -3,10 +3,25 @@
 }
 
 .root.hidden {
-    color: gray;
+    color: #808080;
+    outline: 1px solid #EBEDEF;
+}
+
+.header {
+    background-color: #EBEDEF;
+}
+
+.child-projects .header {
+    background-color: #F3F5F7;
+}
+
+.root.hidden .header {
+    background-color: rgba(243, 245, 247, 0.35);
 }
 
 .drag-handle {
+    /* fallback for ie */
+    cursor: move;
     cursor: grab;
 }
 
@@ -15,6 +30,7 @@
     /* pointer events are prevented on ghost element by default 
      https://github.com/clauderic/react-sortable-hoc/issues/212 */
     pointer-events: auto !important;
+    cursor: move;
     cursor: grabbing;
     font-size: 17px;
 }
@@ -31,7 +47,10 @@
     margin-top: 4px;
 }
 
+.build-type + .build-type {
+    border-top: 1px solid #ccc;
+}
+
 .waiter {
     display: block;
-    text-align: center;
 }

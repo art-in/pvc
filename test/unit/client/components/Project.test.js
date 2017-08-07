@@ -177,8 +177,8 @@ describe('Project', () => {
         // check
         const target = wrapper.find('.Project-build-types .BuildType-root');
         expect(target).to.have.length(2);
-        expect(target.at(0).text()).to.equal('BUILD: Build 1');
-        expect(target.at(1).text()).to.equal('BUILD: Build 2');
+        expect(target.at(0).text()).to.equal('Build 1');
+        expect(target.at(1).text()).to.equal('Build 2');
     });
 
     it('should highlight search string in build type names', () => {

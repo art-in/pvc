@@ -1,23 +1,76 @@
 .root {
+    box-sizing: border-box;
     max-width: 1600px;
+    min-width: 960px;
+    padding: 0 20px;
     margin: 0 auto;
-    margin-top: 30px;
-    font-size: 17px;
+    margin-top: 15px;
 }
 
 .header {
     margin-bottom: 15px;
 }
 
-.colexp-btn {
-    text-decoration: underline;
+.collapse-all,
+.expand-all {
+    display: block;
+    box-sizing: border-box;
+    float: left;
+    width: 30px;
+    height: 25px;
     cursor: pointer;
+    background-color: #f6f6f6;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    border: 1px solid #ccc;
+    border-bottom-color: #bbb;
+    border-radius: 3px;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+        0 1px 2px rgba(0, 0, 0, 0.1);
+
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    background-size: 80% 80%;
+}
+
+.collapse-all:hover,
+.expand-all:hover {
+    background-color: #efefef;
+    filter: none;
+    color: #333;
+    text-decoration: none;
+    transition: background-color 0.1s linear;
+}
+
+.collapse-all:active,
+.expand-all:active {
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.15),
+        0 1px 2px rgba(0, 0, 0, 0.05);
+    outline: 0;
+}
+
+.collapse-all {
+    background-image: url(./images/collapse-all.png);
+    margin-right: 10px;
+}
+
+.expand-all {
+    background-image: url(./images/expand-all.png);
+    margin-right: 20px;
 }
 
 .config-btn {
+    color: #1564c2;
     float: right;
-    text-decoration: underline;
     cursor: pointer;
 }
 
-.no-projects {}
+.config-btn:hover {
+    text-decoration: underline;
+}
+
+.no-projects {
+    display: inline-block;
+    padding: 10px;
+}

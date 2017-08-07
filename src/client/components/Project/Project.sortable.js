@@ -14,5 +14,9 @@ export default SortableElement(({projectId}) =>
         projectId={projectId}
         // eslint-disable-next-line new-cap
         DragHandle={SortableHandle(() =>
-            <span className={classes['drag-handle']}>::::</span>)}/>
+            <span
+                className={classes['drag-handle']}
+                title={'Move project'}>
+                ::::
+            </span>)}/>
 );

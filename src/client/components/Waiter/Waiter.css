@@ -1,1 +1,22 @@
-.root {}
+.root {
+    position: relative;
+    padding-left: 40px;
+}
+
+.spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    
+    position: absolute;
+    left: 10px;
+    top: 0;
+    bottom: 0;
+
+    margin: auto;
+    padding: 0;
+    font-size: 0;
+
+    background: url(./images/spinner.gif) no-repeat 50% 50%;
+    background-size: 100% 100%;
+}
