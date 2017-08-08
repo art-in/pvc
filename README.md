@@ -14,7 +14,7 @@ Install
 git clone https://github.com/artin-phares/pvc
 cd pvc
 npm install
-npm start
+npm run serve
 ```
 
 Config
