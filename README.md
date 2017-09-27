@@ -29,6 +29,6 @@ Tasks
 `npm run serve` - prod build and serve  
 `npm run build` - just prod build  
 
-`npm start` / `npm run watch` - dev build (watch mode)
+`npm start` / `npm run watch` - dev build (watch mode)  
 `npm run test` - run unit tests  
 `npm run test:watch` - run unit tests (watch mode)
